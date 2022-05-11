@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\Common\MysService;
 use Illuminate\Console\Command;
 
 class Mys extends Command
@@ -11,14 +12,25 @@ class Mys extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'mys:sign';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = '米游社自动签到';
+    
+    
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * Execute the console command.
@@ -27,6 +39,7 @@ class Mys extends Command
      */
     public function handle()
     {
-        return 0;
+        $this->info('米游社自动签到开始!');
+        $this->info((new MysService())->AuthSign($this));
     }
 }
