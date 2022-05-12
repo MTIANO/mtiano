@@ -37,11 +37,16 @@ class MysService
         }
         if(!$login_ticket){
             $con->error('获取login_ticket失败!');
+            return false;
         }
         
         $stuid = (new MysApi())->getStuid($login_ticket);
+        if(is_array($stuid)){
+            $con->error($stuid['msg']);
+            return false;
+        }
         
-        dump($login_ticket);
+        dump($stuid);
         die;
         
         return 123;

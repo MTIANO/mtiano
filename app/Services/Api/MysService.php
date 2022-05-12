@@ -14,12 +14,10 @@ class MysService
         $http = new \GuzzleHttp\Client;
         $rel = $http->get($url);
         $rel = json_decode((string)$rel->getBody(), true);
-        dump($rel);die;
-        if($rel['errno'] === 0){
-            return $rel;
+        if($rel['data']['msg'] === '成功'){
+            return $rel['data']['cookie_info']['account_id'];
         }
-    
-        return false;
+        return ['msg' =>$rel['data']['msg'],'info' => $rel['data']['info']];
     }
 
 }
