@@ -21,18 +21,19 @@ use Ramsey\Uuid\Uuid;
 class MysService
 {
     
-    protected $cookis;
-    protected $login_ticket;
-    protected $con;
-    protected $stuid;
-    protected $stoken;
-    protected $headers;
+    protected mixed $cookis;
+    protected string $login_ticket;
+    protected mixed $con;
+    protected mixed $stuid;
+    protected mixed $stoken;
+    protected array $headers;
     
     public function __construct($con=''){
         $stuid_key = 'stuid_key';
         $stoken_key = 'stoken_key';
         $this->cookis = env('MYS_COOKIE');
         $this->con = $con;
+        $this->con->info('开始初始化cookie');
         if(!$this->cookis ){
             $this->con->error('cookie没配置!');
         }
@@ -48,7 +49,7 @@ class MysService
         }
         if(!$this->login_ticket){
             $this->con->error('获取login_ticket失败!');
-            return false;
+            return;
         }
         
         $this->stuid = Cache::get($stuid_key);
@@ -56,7 +57,7 @@ class MysService
             $this->stuid = (new MysApi())->getStuid($this->login_ticket);
             if(is_array($this->stuid)){
                 $this->con->error($this->stuid['msg']);
-                return false;
+                return;
             }
             Cache::add($stuid_key,$this->stuid);
         }
@@ -66,7 +67,7 @@ class MysService
             $this->stoken = (new MysApi())->getStoken($this->login_ticket,$this->stuid);
             if(is_array($this->stoken)){
                 $this->con->error($this->stoken['msg']);
-                return false;
+                return;
             }
             Cache::add($stoken_key,$this->stoken);
         }
@@ -85,11 +86,18 @@ class MysService
             'Host' => 'bbs-api.mihoyo.com',
             'User-Agent' => 'okhttp/4.8.0',
         ];
+        $this->con->info('cookie初始化完毕');
     }
     
     public function AuthSign(){
         $this->con->info('正在获取任务列表');
         $task_list = (new MysApi())->getTaskList($this->headers);
+        if(!is_array($task_list)){
+            $this->con->error($task_list);
+        }
+        if($task_list['can_get_points'] === 0){
+            $this->con->info('今天已经全部完成了！一共获得'.$task_list['today_total_points'].'个米游币，目前有'.$task_list['total_points'].'个米游币');
+        }
         dump($task_list);die;
         return 123;
     }
