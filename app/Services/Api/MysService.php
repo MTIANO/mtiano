@@ -43,7 +43,79 @@ class MysService
             return $rel['message'];
         }
         return $rel['data'];
-        
     }
-
+    
+    public function getBbsList($headers,$from_id=26){
+        $url = env('BBS_LIST_URL').'&forum_id='.$from_id;
+        $http = new \GuzzleHttp\Client;
+        $headers = [
+            'headers' => $headers
+        ];
+        $rel = $http->get($url,$headers);
+        $rel = json_decode((string)$rel->getBody(), true);
+        if($rel['retcode'] !== 0){
+            return $rel['message'];
+        }
+        return $rel['data']['list'];
+    }
+    
+    public function BbsSign($headers){
+        $url = env('BBS_SIGN_URL');
+        $http = new \GuzzleHttp\Client;
+        $headers = [
+            'headers' => $headers
+        ];
+        $rel = $http->post($url,$headers);
+        $rel = json_decode((string)$rel->getBody(), true);
+        if($rel['retcode'] !== 0){
+            return $rel['message'];
+        }
+        return '签到成功!';
+    }
+    
+    public function getReadPosts($headers,$post_id){
+        $url = env('BBS_DETAIL_URL').'?post_id='.$post_id;
+        $http = new \GuzzleHttp\Client;
+        $headers = [
+            'headers' => $headers
+        ];
+        $rel = $http->get($url,$headers);
+        $rel = json_decode((string)$rel->getBody(), true);
+        if($rel['retcode'] !== 0){
+            return false;
+        }
+        return true;
+    }
+    
+    public function getLikePosts($headers,$post_id){
+        $url = env('BBS_LIKE_URL');
+        $http = new \GuzzleHttp\Client;
+        $headers = [
+            'headers' => $headers,
+            'body' => json_encode([
+                'post_id' => $post_id,
+                'is_cancel' => false
+            ], JSON_THROW_ON_ERROR)
+        ];
+        $rel = $http->post($url,$headers);
+        $rel = json_decode((string)$rel->getBody(), true);
+        if($rel['retcode'] !== 0){
+            return false;
+        }
+        return true;
+    }
+    
+    public function getSharePosts($headers,$entity_id){
+        $url = env('BBS_SHARE_URL').'&entity_id='.$entity_id;
+        $http = new \GuzzleHttp\Client;
+        $headers = [
+            'headers' => $headers
+        ];
+        $rel = $http->get($url,$headers);
+        $rel = json_decode((string)$rel->getBody(), true);
+        if($rel['retcode'] !== 0){
+            return false;
+        }
+        return true;
+    }
 }

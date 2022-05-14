@@ -97,9 +97,53 @@ class MysService
         }
         if($task_list['can_get_points'] === 0){
             $this->con->info('今天已经全部完成了！一共获得'.$task_list['today_total_points'].'个米游币，目前有'.$task_list['total_points'].'个米游币');
+            return true;
         }
-        dump($task_list);die;
-        return 123;
+        //if($task_list['states'][0]['mission_id'] >= 62){
+        
+        //}
+        
+        $this->con->info('新的一天，今天可以获得'.$task_list['can_get_points'].'个米游币');
+        $this->con->info( '正在签到......');
+        $bbs_sign = (new MysApi())->BbsSign($this->headers);
+        $this->con->info($bbs_sign);
+        sleep(1);
+        $this->con->info('正在获取帖子列表......');
+        $bbs_list = (new MysApi())->getBbsList($this->headers);
+        if(!is_array($bbs_list)){
+            $this->con->error($bbs_list);
+        }
+        $bbs_list_id = array_rand($bbs_list,5);
+        foreach ($bbs_list as $k => $value){
+            if(isset($value['image_list'][0]['entity_id'])){
+                $entity_id = $value['image_list'][0]['entity_id'];
+            }
+            if(!in_array($k, $bbs_list_id, true)){
+                continue;
+            }
+            $this->con->info('正在看帖子'.$k);
+            $read_posts = (new MysApi())->getReadPosts($this->headers,$value['post']['post_id']);
+            if($read_posts){
+                $this->con->info('帖子'.$k.'浏览成功');
+            }
+    
+            $this->con->info('正在点赞'.$k);
+            $read_posts = (new MysApi())->getLikePosts($this->headers,$value['post']['post_id']);
+            if($read_posts){
+                $this->con->info('点赞帖子'.$k.'成功');
+            }
+            sleep(1);
+        }
+        $this->con->info('正在分享帖子');
+        $share_posts = (new MysApi())->getSharePosts($this->headers,$bbs_list[0]['post']['subject']);
+        if($share_posts){
+            $this->con->info('分享帖子'.$bbs_list[0]['post']['subject'].'成功');
+        }
+        $this->con->info('正在分享帖子');
+        $share_posts = (new MysApi())->getSharePosts($this->headers,$entity_id);
+        if($share_posts){
+            $this->con->info('分享帖子'.$bbs_list[0]['post']['subject'].'成功');
+        }
     }
     
     
