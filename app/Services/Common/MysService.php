@@ -71,27 +71,12 @@ class MysService
             }
             Cache::add($stoken_key,$this->stoken);
         }
-        
-        $this->headers = [
-            'DS'=> $this->get_ds(false,false),
-            'cookie' => 'stuid='.$this->stuid.';stoken='.$this->stoken,
-            'x-rpc-client_type' => 2,
-            'x-rpc-app_version' => '2.7.0',
-            'x-rpc-sys_version' => '6.0.1',
-            'x-rpc-channel' => 'mihoyo',
-            'x-rpc-device_id' => strtoupper(str_replace('-','',Uuid::uuid3(Uuid::NAMESPACE_URL,$this->cookis)->toString())),
-            'x-rpc-device_name' => $this->getrandstr(8),
-            'x-rpc-device_model' => 'Mi 10',
-            'Referer' => 'https://app.mihoyo.com',
-            'Host' => 'bbs-api.mihoyo.com',
-            'User-Agent' => 'okhttp/4.8.0',
-        ];
         $this->con->info('cookie初始化完毕');
     }
     
     public function AuthSign(){
         $this->con->info('正在获取任务列表');
-        $task_list = (new MysApi())->getTaskList($this->headers);
+        $task_list = (new MysApi($this->stuid,$this->stoken))->getTaskList();
         if(!is_array($task_list)){
             $this->con->error($task_list);
         }
@@ -105,11 +90,11 @@ class MysService
         
         $this->con->info('新的一天，今天可以获得'.$task_list['can_get_points'].'个米游币');
         $this->con->info( '正在签到......');
-        $bbs_sign = (new MysApi())->BbsSign($this->headers);
+        $bbs_sign = (new MysApi($this->stuid,$this->stoken))->BbsSign();
         $this->con->info($bbs_sign);
         sleep(1);
         $this->con->info('正在获取帖子列表......');
-        $bbs_list = (new MysApi())->getBbsList($this->headers);
+        $bbs_list = (new MysApi($this->stuid,$this->stoken))->getBbsList();
         if(!is_array($bbs_list)){
             $this->con->error($bbs_list);
         }
@@ -122,58 +107,32 @@ class MysService
                 continue;
             }
             $this->con->info('正在看帖子'.$k);
-            $read_posts = (new MysApi())->getReadPosts($this->headers,$value['post']['post_id']);
+            $read_posts = (new MysApi($this->stuid,$this->stoken))->getReadPosts($value['post']['post_id']);
             if($read_posts){
                 $this->con->info('帖子'.$k.'浏览成功');
             }
     
             $this->con->info('正在点赞'.$k);
-            $read_posts = (new MysApi())->getLikePosts($this->headers,$value['post']['post_id']);
+            $read_posts = (new MysApi($this->stuid,$this->stoken))->getLikePosts($value['post']['post_id']);
             if($read_posts){
                 $this->con->info('点赞帖子'.$k.'成功');
             }
             sleep(1);
         }
         $this->con->info('正在分享帖子');
-        $share_posts = (new MysApi())->getSharePosts($this->headers,$bbs_list[0]['post']['subject']);
+        $share_posts = (new MysApi($this->stuid,$this->stoken))->getSharePosts($bbs_list[0]['post']['subject']);
         if($share_posts){
             $this->con->info('分享帖子'.$bbs_list[0]['post']['subject'].'成功');
         }
         $this->con->info('正在分享帖子');
-        $share_posts = (new MysApi())->getSharePosts($this->headers,$entity_id);
+        $share_posts = (new MysApi($this->stuid,$this->stoken))->getSharePosts($entity_id);
         if($share_posts){
             $this->con->info('分享帖子'.$bbs_list[0]['post']['subject'].'成功');
         }
     }
     
+    public function ys_sign(){
     
-    public function get_ds($web,$web_old){
-        if($web){
-            if($web_old){
-                $n = env('MIHOYOBBS_SALT_WEB_OLD');
-            }else{
-                $n = env('MIHOYOBBS_SALT_WEB');
-            }
-        }else{
-            $n = env('MIHOYOBBS_SALT');
-        }
-        $i = time();
-        $r = $this->getrandstr(6);
-        $c = md5('salt='.$n.'&t='.$i.'&r='.$r);
-        return $i.','.$r.','.$c;
-    }
-    
-    
-    public function check_task($con=''){
-    
-    }
-    
-    
-    function getrandstr($length){
-        $str = 'abcdefghijklmnopqrstuvwxyz1234567890';
-        $randStr = str_shuffle($str);//打乱字符串
-        //substr(string,start,length);返回字符串的一部分
-        return substr($randStr,0,$length);
     }
 
 }
