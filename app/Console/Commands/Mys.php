@@ -40,6 +40,7 @@ class Mys extends Command
     public function handle()
     {
         $this->info('米游社自动签到开始!');
-        $this->info((new MysService($this))->AuthSign());
+        (new MysService($this))->AuthSign();
+        $this->info(('米游社自动签到完成'));
     }
 }

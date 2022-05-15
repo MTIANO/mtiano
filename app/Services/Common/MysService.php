@@ -15,6 +15,7 @@ namespace App\Services\Common;
 use App\Models\MtBogCookie;
 use App\Models\MtBogMsg;
 use App\Services\Api\MysService as MysApi;
+use App\Services\Api\YsService;
 use Illuminate\Support\Facades\Cache;
 use Ramsey\Uuid\Uuid;
 
@@ -74,26 +75,31 @@ class MysService
         $this->con->info('cookie初始化完毕');
     }
     
-    public function AuthSign(){
+    public function AuthSign(): void
+    {
+        $this->con->info('原神签到开始');
+        $this->ys_sign();
+        $this->con->info('原神签到结束');
+    
         $this->con->info('正在获取任务列表');
         $task_list = (new MysApi($this->stuid,$this->stoken))->getTaskList();
         if(!is_array($task_list)){
             $this->con->error($task_list);
+            return;
         }
         if($task_list['can_get_points'] === 0){
             $this->con->info('今天已经全部完成了！一共获得'.$task_list['today_total_points'].'个米游币，目前有'.$task_list['total_points'].'个米游币');
-            return true;
+            return;
         }
         //if($task_list['states'][0]['mission_id'] >= 62){
         
         //}
-        
         $this->con->info('新的一天，今天可以获得'.$task_list['can_get_points'].'个米游币');
-        $this->con->info( '正在签到......');
+        $this->con->info( '正在签到');
         $bbs_sign = (new MysApi($this->stuid,$this->stoken))->BbsSign();
         $this->con->info($bbs_sign);
         sleep(1);
-        $this->con->info('正在获取帖子列表......');
+        $this->con->info('正在获取帖子列表');
         $bbs_list = (new MysApi($this->stuid,$this->stoken))->getBbsList();
         if(!is_array($bbs_list)){
             $this->con->error($bbs_list);
@@ -131,8 +137,44 @@ class MysService
         }
     }
     
-    public function ys_sign(){
-    
+    public function ys_sign(): bool
+    {
+        $this->con->info('获取原神账号');
+        $account_list = (new YsService($this->stuid,$this->stoken))->getAccountList();
+        if(!is_array($account_list)){
+            $this->con->error($account_list);
+            return false;
+        }
+        $this->con->info('正在获取签到奖励列表');
+        $checkin_rewards = (new YsService($this->stuid,$this->stoken))->getCheckinRewards();
+        if(!is_array($checkin_rewards)){
+            $this->con->error($checkin_rewards);
+            return false;
+        }
+        $rewards = $checkin_rewards['awards'][date('d')]['name'].'*'.$checkin_rewards['awards'][date('d')]['cnt'];
+        $account = $account_list[0];
+        $this->con->info('正在为旅行者'.$account['nickname'].'进行签到');
+        $is_sign = (new YsService($this->stuid,$this->stoken))->isSign($account['region'],$account['game_uid']);
+        if(!is_array($is_sign)){
+            $this->con->error($is_sign);
+            return false;
+        }
+        if($is_sign['first_bind']){
+            $this->con->error('旅行者'.$account['nickname'].'是第一次绑定米游社，请先手动签到一次');
+            return false;
+        }
+        if($is_sign['is_sign']){
+            $this->con->info('旅行者'.$account['nickname'].'今天已经签到过了~今天获得的奖励是:'.$rewards);
+            return true;
+        }
+        $sign = (new YsService($this->stuid,$this->stoken))->sign($account['region'],$account['game_uid']);
+        if($sign === true){
+            $this->con->info('已连续签到'.$is_sign['total_sign_day']+1 .'天,今天获得的奖励是'.$rewards);
+        }else{
+            $this->con->error($sign);
+            return false;
+        }
+        return true;
     }
 
 }

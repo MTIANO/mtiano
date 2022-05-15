@@ -144,10 +144,6 @@ class MysService
         return true;
     }
     
-    public function isSign($headers){
-    
-    }
-    
     public function get_ds($web,$web_old){
         if($web){
             if($web_old){
