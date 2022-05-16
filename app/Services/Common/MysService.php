@@ -80,7 +80,6 @@ class MysService
         $this->con->info('原神签到开始');
         $this->ys_sign();
         $this->con->info('原神签到结束');
-    
         $this->con->info('正在获取任务列表');
         $task_list = (new MysApi($this->stuid,$this->stoken))->getTaskList();
         if(!is_array($task_list)){
@@ -117,7 +116,6 @@ class MysService
             if($read_posts){
                 $this->con->info('帖子'.$k.'浏览成功');
             }
-    
             $this->con->info('正在点赞'.$k);
             $read_posts = (new MysApi($this->stuid,$this->stoken))->getLikePosts($value['post']['post_id']);
             if($read_posts){
