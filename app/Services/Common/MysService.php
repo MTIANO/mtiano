@@ -149,7 +149,7 @@ class MysService
             $this->con->error($checkin_rewards);
             return false;
         }
-        $rewards = $checkin_rewards['awards'][date('d')]['name'].'*'.$checkin_rewards['awards'][date('d')]['cnt'];
+        $rewards = $checkin_rewards['awards'][date('d')-1]['name'].'*'.$checkin_rewards['awards'][date('d')-1]['cnt'];
         $account = $account_list[0];
         $this->con->info('正在为旅行者'.$account['nickname'].'进行签到');
         $is_sign = (new YsService($this->stuid,$this->stoken))->isSign($account['region'],$account['game_uid']);
