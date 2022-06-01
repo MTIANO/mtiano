@@ -164,7 +164,7 @@ class BogService
             ->where([
                 'id' => $cookie_id,
                 'user_id' => $user['id'],
-            ])->first()->toArray();
+            ])->first();
         if(!$cookie){
             return '饼干不存在,请先获取饼干';
         }

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Cache;
 class WeiboService
 {
     public function push(){
-        $weibo = Weibo::query()->orderBy('publish_time','desc')->first()->toArray();
+        $weibo = Weibo::query()->orderBy('publish_time','desc')->first();
         //$content_base64 = base64_encode($weibo['content']);
         $key = 'weibo_key';
         if(Cache::get($key) === $weibo['id']){
