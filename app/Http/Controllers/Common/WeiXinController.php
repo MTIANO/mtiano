@@ -37,14 +37,14 @@ class WeiXinController extends BaseController
         
         
         $msg = array (
-            'ToUserName' => 'gh_e1096de195d0',
-            'FromUserName' => 'o3bf-t7x7M8OYxDg1pzrOYz6Jzkg',
-            'CreateTime' => '1648288388',
+            'ToUserName' => 'gh_03aa44ccfbb4',
+            'FromUserName' => 'oERWv6qbxUaXC6Thly0ggeAkVilM',
+            'CreateTime' => '1654050556',
             'MsgType' => 'text',
-            'Content' => '导入u3hrSelT#d5da6008569153a3f1ccce9b9a0decfc',
-            'MsgId' => '23597816170740364',
-            'Encrypt' => 'HCs2n37Bnj4tdJJWiJh/eVQI0aTo3zrjjci/1gAGa9z/kRFJwp7LiV36Jswy2EHTyHUSUk7As2Dz6VgMHNlLDbkaxdr1APdXGLtnufJYE7oHPEFp3/AKs3U4NpKMDjDsDTCs9QlKWlHpoYZ9caSI9Co+2JKKDI/RgncgL51B8qVVHb+KqLZbisNeu3iWQiyhudRyho68KkuIrlxhaPGJ+0Nbd1REhfdBqiR71I2XylUI9hwhztSTnLCD0QQ7T+OM9sfpJTFldwjLzpC0zZAvdxEMfzia8Jo/Yva8pcsvDY4XXs7UkjXhrdKD6k9AMAJjO7eLdiWg29XCorGhUDVLzFCp32JxFokht65RCXFCDD9h7diD1qm9pGwS5mqIQrsaudYL61BgWMrVVH+66XuayaXi/XoFI4Yb0LwZZzuacV6c3/OelmbMusSEXgUUoOgZtjLTTsbyxyFgRl8k6K1TXg==',
-        ) ;
+            'Content' => '签到',
+            'MsgId' => '23680307719913567',
+            'Encrypt' => 'mHLqor1e0B9JtpF0aAcL4GJ2FbYVYkEwZGcRNSl2Jw95bn802JQr9CdkyvuRsDIJyJ4wMZFz0tRsAmcB8pOzOrkiGraZAtiCD2mMsuWjsSfvbx9/x7ZkRbbuP0ThYWSm6bqsqwS7IBXl/UptdHe5W4AyE/0c+dznsfB+09RkDvBS/DXxtxWGCOkdBBOvDNCYBpr22lyiIXbzp2nksGyfWcvn+ojQ79bc+OnedrJgvtLJlzFdpyxyj1wIkxUx9pZhrFa+ooFkeVwmuLWo/3QoEgF5QSLVuJUMH/a6iu30i3FMvtXsbomxgV3JySf30bTSSp4ZhrlKv7mFU77ya4s2af7MLKzurQeIVAiq4rPrph/cRgG6ZEwiip+aSkg+UuZCSJUDJZpsMOex9RwTuq4VgpmLwkOxMd8M3/D5Q1hL0OU=',
+        );
         $CommonService = new CommonService();
         dump($CommonService->manage($msg));
         die;

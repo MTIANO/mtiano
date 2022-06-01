@@ -155,7 +155,7 @@ class CommonService
     }
     
     public function isLinkBog($msg,$user){
-        $is_link = MtBogMsg::query()->where('user_id', $user['id'],)->orderByDesc('created_at')->first()->toArray();
+        $is_link = MtBogMsg::query()->where('user_id', $user['id'],)->orderByDesc('created_at')->first();
         if(!$is_link){
             return false;
         }
