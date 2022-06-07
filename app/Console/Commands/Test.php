@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\Api\WeiXinService;
 use App\Services\Api\YsService;
+use App\Services\Common\MysService;
 use Illuminate\Console\Command;
 
 class Test extends Command
@@ -29,6 +30,6 @@ class Test extends Command
      */
     public function handle()
     {
-        (new YsService())->get_user_info('cn_gf01','193403219');
+        (new MysService($this))->ys_user();
     }
 }

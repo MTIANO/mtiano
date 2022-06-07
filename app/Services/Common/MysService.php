@@ -77,8 +77,6 @@ class MysService
     
     public function AuthSign(): void
     {
-        /*$asd = (new YsService($this->stuid,$this->stoken))->get_user_info('cn_gf01','193403219');
-        dump($asd);die;*/
         $this->con->info('原神签到开始');
         $this->ys_sign();
         $this->con->info('原神签到结束');
@@ -175,6 +173,11 @@ class MysService
             return false;
         }
         return true;
+    }
+    
+    public function ys_user(){
+        $asd = (new YsService($this->stuid,$this->stoken))->get_user_info('cn_gf01','193403219');
+        dump($asd);die;
     }
 
 }
