@@ -178,6 +178,10 @@ class CommonService
             return false;
         }
     
+        if($msg['Content'] === '原神'){
+            return (new YsService())->get_user();
+        }
+    
         if($msg['Content'] === 'bogend'){
             return (new BogService())->bogEnd($msg,$user);
         }

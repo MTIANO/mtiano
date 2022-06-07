@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Common;
 
 use App\Services\Common\CommonService;
 use App\Services\Common\ImgService;
+use App\Services\Common\YsService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -41,7 +42,7 @@ class WeiXinController extends BaseController
             'FromUserName' => 'oERWv6qbxUaXC6Thly0ggeAkVilM',
             'CreateTime' => '1654050556',
             'MsgType' => 'text',
-            'Content' => '签到',
+            'Content' => '原神',
             'MsgId' => '23680307719913567',
             'Encrypt' => 'mHLqor1e0B9JtpF0aAcL4GJ2FbYVYkEwZGcRNSl2Jw95bn802JQr9CdkyvuRsDIJyJ4wMZFz0tRsAmcB8pOzOrkiGraZAtiCD2mMsuWjsSfvbx9/x7ZkRbbuP0ThYWSm6bqsqwS7IBXl/UptdHe5W4AyE/0c+dznsfB+09RkDvBS/DXxtxWGCOkdBBOvDNCYBpr22lyiIXbzp2nksGyfWcvn+ojQ79bc+OnedrJgvtLJlzFdpyxyj1wIkxUx9pZhrFa+ooFkeVwmuLWo/3QoEgF5QSLVuJUMH/a6iu30i3FMvtXsbomxgV3JySf30bTSSp4ZhrlKv7mFU77ya4s2af7MLKzurQeIVAiq4rPrph/cRgG6ZEwiip+aSkg+UuZCSJUDJZpsMOex9RwTuq4VgpmLwkOxMd8M3/D5Q1hL0OU=',
         );
@@ -65,7 +66,7 @@ class WeiXinController extends BaseController
             return false;
         }
         $CommonService->addUser($msg);
-        //Log::channel('daily')->info($msg);
+        Log::channel('daily')->info($msg);
         switch ($msg['MsgType']){
             case'event':
                 if($msg['Event'] === 'subscribe' ){
@@ -75,6 +76,11 @@ class WeiXinController extends BaseController
                 if($msg['Event'] === 'unsubscribe' ){
                     $CommonService->disableUser($msg);
                     return true;
+                }
+                if($msg['Event'] === 'CLICK' ){
+                    if($msg['EventKey'] === 'YS'){
+                        return $CommonService->doText($msg,(new YsService())->get_user());
+                    }
                 }
             case'text':
                 $text = $CommonService->manage($msg);

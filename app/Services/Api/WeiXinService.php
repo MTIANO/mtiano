@@ -64,6 +64,49 @@ class WeiXinService
         return $rel['errmsg'];
     }
     
+    public function menu_create(){
+        $access_token = $this->getToken();
+        if(!is_array($access_token)){
+            return $access_token;
+        }
+        $access_token = $access_token['access_token'];
+        $url = 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token='.$access_token;
+        $http = new \GuzzleHttp\Client;
+        $msg = [
+            'button' => [
+                'type' => 'click',
+                'name' => urlencode('原神'),
+                'key' => "YS",
+            ]
+        ];
+        $data = [
+            'body' => urldecode(json_encode($msg))
+        ];
+        $rel = $http->post($url,$data);
+        $rel = json_decode((string)$rel->getBody(), true);
+        dump($rel);die;
+        if($rel['errcode'] === 0){
+            return true;
+        }
+        return $rel['errmsg'];
+    }
+    
+    public function menu_del(){
+        $access_token = $this->getToken();
+        if(!is_array($access_token)){
+            return $access_token;
+        }
+        $access_token = $access_token['access_token'];
+        $url = 'https://api.weixin.qq.com/cgi-bin/menu/delete?access_token='.$access_token;
+        $http = new \GuzzleHttp\Client;
+        $rel = $http->get($url);
+        $rel = json_decode((string)$rel->getBody(), true);
+        dump($rel);die;
+        if($rel['errcode'] === 0){
+            return true;
+        }
+        return $rel['errmsg'];
+    }
     
     
     

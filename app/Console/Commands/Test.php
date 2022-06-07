@@ -30,6 +30,6 @@ class Test extends Command
      */
     public function handle()
     {
-        (new MysService($this))->ys_user();
+        (new WeiXinService())->menu_create();
     }
 }
