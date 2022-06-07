@@ -25,16 +25,16 @@ class WeiboService
         if(Cache::get($key) === $weibo['id']){
             return '暂无更新';
         }else{
-            $url = "http://pushplus.hxtrip.com/send";
+            /*$url = "http://pushplus.hxtrip.com/send";
             $token = env('PUSH_TOKEN');
             //$service_id = env('QIYEWEIXIN_MSG_SERVICEID');
-            $title = "微博更新提醒";
+            $title = "微博更新提醒";*/
             
             $name = User::query()->where('id',$weibo['user_id'])->value('nickname');
             $weibo_url = 'https://weibo.com/'.$weibo['user_id'].'/'.$weibo['id'];
-            $content = $name.'于'.$weibo['publish_time'].'更新了微博:'.$weibo['content'].'点击: <a href="'.$weibo_url.'">查看</a>';
+            //$content = $name.'于'.$weibo['publish_time'].'更新了微博:'.$weibo['content'].'点击: <a href="'.$weibo_url.'">查看</a>';
     
-            return (new WeiXinService())->send($name.'更新了微博',$weibo['content'],$weibo['publish_time'],$weibo_url);
+            return (new WeiXinService())->send($name.' 更新了微博',$weibo['content'],$weibo['publish_time'],$weibo_url);
             
             /*$doc_type = "html";
             $data = [
