@@ -34,8 +34,12 @@ class WeiboService
             $weibo_url = 'https://weibo.com/'.$weibo['user_id'].'/'.$weibo['id'];
             //$content = $name.'于'.$weibo['publish_time'].'更新了微博:'.$weibo['content'].'点击: <a href="'.$weibo_url.'">查看</a>';
     
-            return (new WeiXinService())->send($name.' 更新了微博',$weibo['content'],$weibo['publish_time'],$weibo_url);
-            
+            $rel = (new WeiXinService())->send($name.' 更新了微博',$weibo['content'],$weibo['publish_time'],$weibo_url);
+            if($rel === true){
+                Cache::forget($key);
+                Cache::add($key,$weibo['id']);
+            }
+            return $rel;
             /*$doc_type = "html";
             $data = [
                 'token' => $token,
