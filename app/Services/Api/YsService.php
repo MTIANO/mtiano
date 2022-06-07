@@ -111,10 +111,36 @@ class YsService
         return $i.','.$r.','.$c;
     }
     
+    public function get_os_ds($query){
+        $n = 'xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs';
+        $i = time();
+        $r = random_int(100001,200000);
+        $b = '';
+        $q = $query;
+        $c = md5('salt='.$n.'&t='.$i.'&r='.$r.'&b='.$b.'&q='.$q);
+        return $i.','.$r.','.$c;
+    }
+    
     function getrandstr($length){
         $str = 'abcdefghijklmnopqrstuvwxyz1234567890';
         $randStr = str_shuffle($str);//打乱字符串
         //substr(string,start,length);返回字符串的一部分
         return substr($randStr,0,$length);
+    }
+    
+    public function get_user_info($server,$role_id){
+        $url = 'https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/dailyNote?server='.$server.'&role_id='.$role_id;
+        $http = new \GuzzleHttp\Client;
+        $this->headers['x-rpc-app_version'] = '2.11.1';
+        $this->headers['DS'] = $this->get_os_ds('role_id='.$role_id.'&server='.$server);
+        $data = [
+            'headers' => $this->headers
+        ];
+        $rel = $http->get($url,$data);
+        $rel = json_decode((string)$rel->getBody(), true);
+        if($rel['retcode'] !== 0){
+            return $rel['message'];
+        }
+        return $rel['data'];
     }
 }
