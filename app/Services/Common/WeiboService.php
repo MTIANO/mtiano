@@ -13,6 +13,7 @@ namespace App\Services\Common;
 
 use App\Models\User;
 use App\Models\Weibo;
+use App\Services\Api\WeiXinService;
 use Illuminate\Support\Facades\Cache;
 
 class WeiboService
@@ -32,8 +33,10 @@ class WeiboService
             $name = User::query()->where('id',$weibo['user_id'])->value('nickname');
             $weibo_url = 'https://weibo.com/'.$weibo['user_id'].'/'.$weibo['id'];
             $content = $name.'于'.$weibo['publish_time'].'更新了微博:'.$weibo['content'].'点击: <a href="'.$weibo_url.'">查看</a>';
+    
+            return (new WeiXinService())->send($name.'更新了微博',$weibo['content'],$weibo['publish_time'],$weibo_url);
             
-            $doc_type = "html";
+            /*$doc_type = "html";
             $data = [
                 'token' => $token,
                 //'service_id' => $service_id,
@@ -47,7 +50,7 @@ class WeiboService
             $rel = json_decode((string)$rel->getBody(), true);
             Cache::forget($key);
             Cache::add($key,$weibo['id']);
-            return '发送成功';
+            return '发送成功';*/
             /*if($rel['code'] === 200){
                 //Cache::forget($key);
                 //Cache::add($key,$weibo['id']);
