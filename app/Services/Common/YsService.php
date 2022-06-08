@@ -80,8 +80,8 @@ class YsService
         $account = $account_list[0];
         $user = (new YsApi($this->stuid,$this->stoken))->get_user_info($account['region'],$account['game_uid']);
         $text = "实时便笺: \r\n";
-        $text .= "原粹树脂: ".$user["current_resin"]."/".$user["max_resin"]." (将于".$user["resin_recovery_time"]."秒后全部恢复) \r\n";
-        $text .= "洞天财瓮-洞天宝钱: ".$user["current_home_coin"]."/".$user["max_home_coin"]." (将于".$user["home_coin_recovery_time"]."秒后到大储存上限) \r\n";
+        $text .= "原粹树脂: ".$user["current_resin"]."/".$user["max_resin"]." (将于".(new CommonService())->Sec2Time($user["resin_recovery_time"])."秒后全部恢复) \r\n";
+        $text .= "洞天财瓮-洞天宝钱: ".$user["current_home_coin"]."/".$user["max_home_coin"]." (将于".(new CommonService())->Sec2Time($user["home_coin_recovery_time"])."秒后到大储存上限) \r\n";
         $text .= "每日委托任务: ".$user["finished_task_num"]."/".$user["total_task_num"]."  \r\n";
         $text .= "值得铭记的强敌: ".$user["remain_resin_discount_num"]."/".$user["resin_discount_num_limit"]."  \r\n";
         
