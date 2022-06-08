@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Common;
 
 
+use App\Models\MtUser;
 use App\Services\Common\CommonService;
 use App\Services\Common\ImgService;
 use App\Services\Common\YsService;
@@ -66,7 +67,11 @@ class WeiXinController extends BaseController
             return false;
         }
         $CommonService->addUser($msg);
-        Log::channel('daily')->info($msg);
+        $user = (new MtUser())->getUserByWinXinId($msg['FromUserName']);
+        if(!$user){
+            $CommonService->doText($msg,'获取用户失败!');
+        }
+        //Log::channel('daily')->info($msg);
         switch ($msg['MsgType']){
             case'event':
                 if($msg['Event'] === 'subscribe' ){
@@ -79,11 +84,11 @@ class WeiXinController extends BaseController
                 }
                 if($msg['Event'] === 'CLICK' ){
                     if($msg['EventKey'] === 'YS'){
-                        return $CommonService->doText($msg,(new YsService())->get_user());
+                        return $CommonService->doText($msg,(new YsService($user))->get_user());
                     }
                 }
             case'text':
-                $text = $CommonService->manage($msg);
+                $text = $CommonService->manage($msg,$user);
                 if($text === false){
                     $text = '指令无效,更多功能指令请联系本人!(目前开放:老黄历, 图片, bog)';
                 }elseif($text === true){

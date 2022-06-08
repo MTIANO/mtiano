@@ -171,15 +171,10 @@ class CommonService
     }
     
     //处理消息
-    public function manage($msg): bool|string|array
+    public function manage($msg,$user): bool|string|array
     {
-        $user = (new MtUser())->getUserByWinXinId($msg['FromUserName']);
-        if(!$user){
-            return false;
-        }
-    
         if($msg['Content'] === '原神'){
-            return (new YsService())->get_user();
+            return (new YsService($user))->get_user();
         }
     
         if($msg['Content'] === 'bogend'){

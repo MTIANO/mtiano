@@ -11,6 +11,7 @@
 
 namespace App\Services\Common;
 
+use App\Models\MtYsCookie;
 use App\Services\Api\MysService as MysApi;
 use App\Services\Api\YsService as YsApi;
 use Illuminate\Support\Facades\Cache;
@@ -25,12 +26,14 @@ class YsService
     protected array $headers;
     protected string $error = '';
     
-    public function __construct(){
-        $stuid_key = 'stuid_key';
-        $stoken_key = 'stoken_key';
-        $this->cookis = env('MYS_COOKIE');
+    public function __construct($user){
+        $stuid_key = 'stuid_key_'.$user['id'];
+        $stoken_key = 'stoken_key_'.$user['id'];
+    
+        $this->cookis = MtYsCookie::query()->where('user_id',$user['id'])->value('cookie');
+        
         if(!$this->cookis ){
-            $this->error = 'cookie没配置';
+            $this->error = 'cookie没配置, 请参考公众号文章进行配置';
             return;
         }
         $cookie_list = explode(';',$this->cookis);
@@ -80,8 +83,8 @@ class YsService
         $account = $account_list[0];
         $user = (new YsApi($this->stuid,$this->stoken))->get_user_info($account['region'],$account['game_uid']);
         $text = "实时便笺: \r\n";
-        $text .= "原粹树脂: ".$user["current_resin"]."/".$user["max_resin"]." (将于".(new CommonService())->Sec2Time($user["resin_recovery_time"])."秒后全部恢复) \r\n";
-        $text .= "洞天财瓮-洞天宝钱: ".$user["current_home_coin"]."/".$user["max_home_coin"]." (将于".(new CommonService())->Sec2Time($user["home_coin_recovery_time"])."秒后到大储存上限) \r\n";
+        $text .= "原粹树脂: ".$user["current_resin"]."/".$user["max_resin"]." (将于".(new CommonService())->Sec2Time($user["resin_recovery_time"])."后全部恢复) \r\n";
+        $text .= "洞天财瓮-洞天宝钱: ".$user["current_home_coin"]."/".$user["max_home_coin"]." (将于".(new CommonService())->Sec2Time($user["home_coin_recovery_time"])."后到大储存上限) \r\n";
         $text .= "每日委托任务: ".$user["finished_task_num"]."/".$user["total_task_num"]."  \r\n";
         $text .= "值得铭记的强敌: ".$user["remain_resin_discount_num"]."/".$user["resin_discount_num_limit"]."  \r\n";
         
