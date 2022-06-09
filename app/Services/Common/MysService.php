@@ -14,7 +14,9 @@ namespace App\Services\Common;
 
 use App\Models\MtBogCookie;
 use App\Models\MtBogMsg;
+use App\Models\MtUser;
 use App\Services\Api\MysService as MysApi;
+use App\Services\Api\WeiXinService;
 use App\Services\Api\YsService;
 use Illuminate\Support\Facades\Cache;
 use Ramsey\Uuid\Uuid;
@@ -76,10 +78,10 @@ class MysService
         $this->con->info('cookie初始化完毕');
     }
     
-    public function AuthSign(): void
+    public function AuthSign($user_id): void
     {
         $this->con->info('原神签到开始');
-        $this->ys_sign();
+        $this->ys_sign($user_id);
         $this->con->info('原神签到结束');
         $this->con->info('正在获取任务列表');
         $task_list = (new MysApi($this->stuid,$this->stoken))->getTaskList();
@@ -136,7 +138,7 @@ class MysService
         }
     }
     
-    public function ys_sign(): bool
+    public function ys_sign($user_id): bool
     {
         $this->con->info('获取原神账号');
         $account_list = (new YsService($this->stuid,$this->stoken))->getAccountList();
@@ -163,11 +165,21 @@ class MysService
             return false;
         }
         if($is_sign['is_sign']){
+            $first = '米游社每日任务/签到完成通知!!';
+            $keyword1 = '旅行者'.$account['nickname'].'今天已经签到过了~今天获得的奖励是:'.$rewards;
+            $keyword2 = date('Y-m-d H:i:s');
+            $item = MtUser::query()->where('id',$user_id)->value('winxin_id');
+            $this->con->info((new WeiXinService())->send($first,$keyword1,$keyword2,'','',$item));
             $this->con->info('旅行者'.$account['nickname'].'今天已经签到过了~今天获得的奖励是:'.$rewards);
             return true;
         }
         $sign = (new YsService($this->stuid,$this->stoken))->sign($account['region'],$account['game_uid']);
         if($sign === true){
+            $first = '米游社每日任务/签到完成通知!!';
+            $keyword1 = '已连续签到'.$is_sign['total_sign_day']+1 .'天,今天获得的奖励是'.$rewards;
+            $keyword2 = date('Y-m-d H:i:s');
+            $item = MtUser::query()->where('id',$user_id)->value('winxin_id');
+            $this->con->info((new WeiXinService())->send($first,$keyword1,$keyword2,'','',$item));
             $this->con->info('已连续签到'.$is_sign['total_sign_day']+1 .'天,今天获得的奖励是'.$rewards);
         }else{
             $this->con->error($sign);

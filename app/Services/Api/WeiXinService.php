@@ -20,7 +20,7 @@ class WeiXinService
         return $rel;
     }
     
-    public function send($first,$keyword1,$keyword2,$sand_url,$remark = '点击查看内容',$touser='oERWv6qbxUaXC6Thly0ggeAkVilM'){
+    public function send($first,$keyword1,$keyword2,$sand_url = '',$remark = '点击查看内容',$touser='oERWv6qbxUaXC6Thly0ggeAkVilM'){
         $access_token = $this->getToken();
         if(!is_array($access_token)){
             return $access_token;
