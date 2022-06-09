@@ -15,6 +15,7 @@ use App\Models\MtBill;
 use App\Models\MtBogMsg;
 use App\Models\MtServiceBill;
 use App\Models\MtUser;
+use App\Models\MtYsCookie;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -154,6 +155,14 @@ class CommonService
         }
     }
     
+    public function setYsCookie($msg,$user){
+        $is_cookie = MtYsCookie::query()->where('user_id', $user['id'],)->first();
+        if(!$is_cookie){
+            MtYsCookie::query()->create(['cookie'=>$msg['Content'],'user_id'=>$user['id']]);
+        }
+        return '米游社cookis设置成功';
+    }
+    
     public function isLinkBog($msg,$user){
         $is_link = MtBogMsg::query()->where('user_id', $user['id'],)->orderByDesc('created_at')->first();
         if(!$is_link){
@@ -173,6 +182,10 @@ class CommonService
     //处理消息
     public function manage($msg,$user): bool|string|array
     {
+        if(str_contains($msg['Content'], '_MHYUUID')){
+            return $this->setYsCookie($msg,$user);
+        }
+        
         if($msg['Content'] === '原神'){
             return (new YsService($user))->get_user();
         }

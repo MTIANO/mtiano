@@ -29,10 +29,11 @@ class MysService
     protected mixed $stoken;
     protected array $headers;
     
-    public function __construct($con=''){
+    public function __construct($con,$cookie){
         $stuid_key = 'stuid_key';
         $stoken_key = 'stoken_key';
-        $this->cookis = env('MYS_COOKIE');
+        //$this->cookis = env('MYS_COOKIE');
+        $this->cookis = $cookie;
         $this->con = $con;
         $this->con->info('开始初始化cookie');
         if(!$this->cookis ){

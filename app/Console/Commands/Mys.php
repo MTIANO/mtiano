@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\MtYsCookie;
 use App\Services\Common\MysService;
 use Illuminate\Console\Command;
 
@@ -40,7 +41,17 @@ class Mys extends Command
     public function handle()
     {
         $this->info('米游社自动签到开始!');
-        (new MysService($this))->AuthSign();
+        $this->info('获取签到用户列表!');
+        $user_list = MtYsCookie::query()->get()->toArray();
+        if(!$user_list){
+            $this->info('无签到用户!');
+        }
+        
+        foreach($user_list as $value){
+            $this->info('开始签到用户'.$value['user_id']);
+            (new MysService($this,$value['cookie']))->AuthSign();
+            $this->info('结束签到用户'.$value['user_id']);
+        }
         $this->info(('米游社自动签到完成'));
     }
 }
