@@ -20,7 +20,7 @@ class WeiXinService
         return $rel;
     }
     
-    public function send($first,$keyword1,$keyword2,$sand_url,$touser='oERWv6qbxUaXC6Thly0ggeAkVilM'){
+    public function send($first,$keyword1,$keyword2,$sand_url,$remark = '点击查看内容',$touser='oERWv6qbxUaXC6Thly0ggeAkVilM'){
         $access_token = $this->getToken();
         if(!is_array($access_token)){
             return $access_token;
@@ -48,7 +48,7 @@ class WeiXinService
                     'color' => '#173177',
                 ],
                 'remark' =>  [
-                    'value' => '点击查看内容',
+                    'value' => $remark,
                     'color' => '#173177',
                 ],
             ]
@@ -108,6 +108,17 @@ class WeiXinService
         return $rel['errmsg'];
     }
     
-    
+    public function get_user(){
+        $access_token = $this->getToken();
+        if(!is_array($access_token)){
+            return $access_token;
+        }
+        $access_token = $access_token['access_token'];
+        $url = 'https://api.weixin.qq.com/cgi-bin/user/get?access_token='.$access_token;
+        $http = new \GuzzleHttp\Client;
+        $rel = $http->get($url);
+        $rel = json_decode((string)$rel->getBody(), true);
+        return $rel['data']['openid'];
+    }
     
 }
