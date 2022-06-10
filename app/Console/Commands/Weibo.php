@@ -8,6 +8,7 @@ use App\Models\MtWeiBoUser;
 use App\Services\Api\WeiBoService;
 use App\Services\Api\WeiXinService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class Weibo extends Command
 {
@@ -80,6 +81,11 @@ class Weibo extends Command
                     $first = $user_info['screen_name'].'更新了微博';
                     $weibo_url = 'https://weibo.com/'.$data['user_id'].'/'.$value['mblogid'];
                     (new WeiXinService())->send($first,$data['content'],$data['publish_time'],$weibo_url);
+                    foreach ($original_pictures as $value_img){
+                        $file = file_get_contents($value_img);
+                        $name = explode('/',$value_img);
+                        Storage::disk('weibo')->put($user_info['screen_name'].'/'.end($name), $file);
+                    }
                 }
             }
             $this->info('获取'.$user_info['screen_name'].'的微博结束');

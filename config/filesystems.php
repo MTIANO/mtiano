@@ -34,6 +34,10 @@ return [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
+        'weibo' => [
+            'driver' => 'local',
+            'root' => '/www/wwwroot/weibo/img',
+        ],
 
         'public' => [
             'driver' => 'local',
