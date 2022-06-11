@@ -13,6 +13,7 @@ namespace App\Services\Common;
 
 use App\Models\MtYsCookie;
 use App\Services\Api\MysService as MysApi;
+use App\Services\Api\WeiXinService;
 use App\Services\Api\YsService as YsApi;
 use Illuminate\Support\Facades\Cache;
 
@@ -95,6 +96,36 @@ class YsService
         }
         $text .= "参量质变仪: ".$transformer."  \r\n";
         return $text;
+    }
+    
+    public function remind($cookie){
+        if($this->error){
+            return $this->error;
+        }
+        $account_list = (new YsApi($this->stuid,$this->stoken))->getAccountList();
+        if(!is_array($account_list)){
+            return $account_list;
+        }
+        $account = $account_list[0];
+        $user = (new YsApi($this->stuid,$this->stoken))->get_user_info($account['region'],$account['game_uid']);
+        $text = "原粹树脂: ".$user["current_resin"]."/".$user["max_resin"]." (将于".(new CommonService())->Sec2Time($user["resin_recovery_time"])."后全部恢复) \r\n";
+        $text .= "洞天财瓮-洞天宝钱: ".$user["current_home_coin"]."/".$user["max_home_coin"]." (将于".(new CommonService())->Sec2Time($user["home_coin_recovery_time"])."后到大储存上限) \r\n";
+        $text .= "每日委托任务: ".$user["finished_task_num"]."/".$user["total_task_num"]."  \r\n";
+        $text .= "值得铭记的强敌: ".$user["remain_resin_discount_num"]."/".$user["resin_discount_num_limit"]."  \r\n";
+    
+        if($user['transformer']['recovery_time']['reached']){
+            $transformer = "可使用";
+        }else{
+            $transformer = "冷却中, ".$user['transformer']['recovery_time']['Day']."天".$user['transformer']['recovery_time']['Hour']."小时".$user['transformer']['recovery_time']['Minute']."分后再次使用";
+        }
+        $text .= "参量质变仪: ".$transformer."  \r\n";
+        
+        if(($user["current_resin"] >= 120) || ($user["current_home_coin"] >= 1000) || $user['transformer']['recovery_time']['reached']){
+            $first = '米游社提醒';
+            $keyword2 = date('Y-m-d H:i:s');
+            dump((new WeiXinService())->send($first,$text,$keyword2,'','',$cookie));
+        }
+        return true;
     }
 
 }
