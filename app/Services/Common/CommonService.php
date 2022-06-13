@@ -156,9 +156,15 @@ class CommonService
     }
     
     public function setYsCookie($msg,$user){
+        $stuid_key = 'stuid_key_'.$user['id'];
+        $stoken_key = 'stoken_key_'.$user['id'];
         $is_cookie = MtYsCookie::query()->where('user_id', $user['id'],)->first();
         if(!$is_cookie){
             MtYsCookie::query()->create(['cookie'=>$msg['Content'],'user_id'=>$user['id']]);
+        }else{
+            MtYsCookie::query()->where('user_id',$user['id'])->update(['cookie'=>$msg['Content']]);
+            Cache::forget($stuid_key);
+            Cache::forget($stoken_key);
         }
         return '米游社cookis设置成功';
     }
