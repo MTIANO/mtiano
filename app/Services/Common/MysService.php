@@ -19,6 +19,7 @@ use App\Services\Api\MysService as MysApi;
 use App\Services\Api\WeiXinService;
 use App\Services\Api\YsService;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Uuid;
 
 class MysService
@@ -31,9 +32,9 @@ class MysService
     protected mixed $stoken;
     protected array $headers;
     
-    public function __construct($con,$cookie){
-        $stuid_key = 'stuid_key';
-        $stoken_key = 'stoken_key';
+    public function __construct($con,$cookie,$user_id){
+        $stuid_key = 'stuid_key_'.$user_id;
+        $stoken_key = 'stoken_key_'.$user_id;
         //$this->cookis = env('MYS_COOKIE');
         $this->cookis = $cookie;
         $this->con = $con;

@@ -49,7 +49,7 @@ class Mys extends Command
         
         foreach($user_list as $value){
             $this->info('开始签到用户'.$value['user_id']);
-            (new MysService($this,$value['cookie']))->AuthSign($value['user_id']);
+            (new MysService($this,$value['cookie'],$value['user_id']))->AuthSign($value['user_id']);
             $this->info('结束签到用户'.$value['user_id']);
         }
         $this->info(('米游社自动签到完成'));
