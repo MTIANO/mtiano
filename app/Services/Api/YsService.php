@@ -17,13 +17,16 @@ class YsService
      */
     protected array $headers;
     
-    public function __construct($stuid = '',$stoken = ''){
+    public function __construct($stuid = '',$stoken = '',$cookis = ''){
+        if(!$cookis){
+            $cookis = env('MYS_COOKIE');
+        }
         $this->headers = [
             'Accept' => 'application/json, text/plain, */*',
             'DS'=> $this->get_ds(true,true),
             'Origin' => 'https://webstatic.mihoyo.com',
             'x-rpc-app_version' => '2.3.0',
-            'cookie' => env('MYS_COOKIE'),
+            'cookie' => $cookis,
             'x-rpc-client_type' => 5,
             'x-rpc-device_id' => strtoupper(str_replace('-','',Uuid::uuid3(Uuid::NAMESPACE_URL,env('MYS_COOKIE'))->toString())),
             'Accept-Encoding' => 'gzip, deflate',

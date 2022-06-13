@@ -84,7 +84,7 @@ class MysService
         $this->ys_sign($user_id);
         $this->con->info('原神签到结束');
         $this->con->info('正在获取任务列表');
-        $task_list = (new MysApi($this->stuid,$this->stoken))->getTaskList();
+        $task_list = (new MysApi($this->stuid,$this->stoken,$this->cookis))->getTaskList();
         if(!is_array($task_list)){
             $this->con->error($task_list);
             return;
@@ -98,11 +98,11 @@ class MysService
         //}
         $this->con->info('新的一天，今天可以获得'.$task_list['can_get_points'].'个米游币');
         $this->con->info( '正在签到');
-        $bbs_sign = (new MysApi($this->stuid,$this->stoken))->BbsSign();
+        $bbs_sign = (new MysApi($this->stuid,$this->stoken,$this->cookis))->BbsSign();
         $this->con->info($bbs_sign);
         sleep(1);
         $this->con->info('正在获取帖子列表');
-        $bbs_list = (new MysApi($this->stuid,$this->stoken))->getBbsList();
+        $bbs_list = (new MysApi($this->stuid,$this->stoken,$this->cookis))->getBbsList();
         if(!is_array($bbs_list)){
             $this->con->error($bbs_list);
         }
@@ -115,24 +115,24 @@ class MysService
                 continue;
             }
             $this->con->info('正在看帖子'.$k);
-            $read_posts = (new MysApi($this->stuid,$this->stoken))->getReadPosts($value['post']['post_id']);
+            $read_posts = (new MysApi($this->stuid,$this->stoken,$this->cookis))->getReadPosts($value['post']['post_id']);
             if($read_posts){
                 $this->con->info('帖子'.$k.'浏览成功');
             }
             $this->con->info('正在点赞'.$k);
-            $read_posts = (new MysApi($this->stuid,$this->stoken))->getLikePosts($value['post']['post_id']);
+            $read_posts = (new MysApi($this->stuid,$this->stoken,$this->cookis))->getLikePosts($value['post']['post_id']);
             if($read_posts){
                 $this->con->info('点赞帖子'.$k.'成功');
             }
             sleep(1);
         }
         $this->con->info('正在分享帖子');
-        $share_posts = (new MysApi($this->stuid,$this->stoken))->getSharePosts($bbs_list[0]['post']['subject']);
+        $share_posts = (new MysApi($this->stuid,$this->stoken,$this->cookis))->getSharePosts($bbs_list[0]['post']['subject']);
         if($share_posts){
             $this->con->info('分享帖子'.$bbs_list[0]['post']['subject'].'成功');
         }
         $this->con->info('正在分享帖子');
-        $share_posts = (new MysApi($this->stuid,$this->stoken))->getSharePosts($entity_id);
+        $share_posts = (new MysApi($this->stuid,$this->stoken,$this->cookis))->getSharePosts($entity_id);
         if($share_posts){
             $this->con->info('分享帖子'.$bbs_list[0]['post']['subject'].'成功');
         }
@@ -141,13 +141,13 @@ class MysService
     public function ys_sign($user_id): bool
     {
         $this->con->info('获取原神账号');
-        $account_list = (new YsService($this->stuid,$this->stoken))->getAccountList();
+        $account_list = (new YsService($this->stuid,$this->stoken,$this->cookis))->getAccountList();
         if(!is_array($account_list)){
             $this->con->error($account_list);
             return false;
         }
         $this->con->info('正在获取签到奖励列表');
-        $checkin_rewards = (new YsService($this->stuid,$this->stoken))->getCheckinRewards();
+        $checkin_rewards = (new YsService($this->stuid,$this->stoken,$this->cookis))->getCheckinRewards();
         if(!is_array($checkin_rewards)){
             $this->con->error($checkin_rewards);
             return false;
@@ -155,7 +155,7 @@ class MysService
         $rewards = $checkin_rewards['awards'][date('d')-1]['name'].'*'.$checkin_rewards['awards'][date('d')-1]['cnt'];
         $account = $account_list[0];
         $this->con->info('正在为旅行者'.$account['nickname'].'进行签到');
-        $is_sign = (new YsService($this->stuid,$this->stoken))->isSign($account['region'],$account['game_uid']);
+        $is_sign = (new YsService($this->stuid,$this->stoken,$this->cookis))->isSign($account['region'],$account['game_uid']);
         if(!is_array($is_sign)){
             $this->con->error($is_sign);
             return false;
@@ -189,7 +189,7 @@ class MysService
     }
     
     public function ys_user(){
-        $asd = (new YsService($this->stuid,$this->stoken))->get_user_info('cn_gf01','193403219');
+        $asd = (new YsService($this->stuid,$this->stoken,$this->cookis))->get_user_info('cn_gf01','193403219');
         dump($asd);die;
     }
 

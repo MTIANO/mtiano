@@ -16,6 +16,7 @@ use App\Services\Api\MysService as MysApi;
 use App\Services\Api\WeiXinService;
 use App\Services\Api\YsService as YsApi;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class YsService
 {
@@ -77,12 +78,12 @@ class YsService
         if($this->error){
             return $this->error;
         }
-        $account_list = (new YsApi($this->stuid,$this->stoken))->getAccountList();
+        $account_list = (new YsApi($this->stuid,$this->stoken,$this->cookis))->getAccountList();
         if(!is_array($account_list)){
             return $account_list;
         }
         $account = $account_list[0];
-        $user = (new YsApi($this->stuid,$this->stoken))->get_user_info($account['region'],$account['game_uid']);
+        $user = (new YsApi($this->stuid,$this->stoken,$this->cookis))->get_user_info($account['region'],$account['game_uid']);
         $text = "实时便笺: \r\n";
         $text .= "原粹树脂: ".$user["current_resin"]."/".$user["max_resin"]." (将于".(new CommonService())->Sec2Time($user["resin_recovery_time"])."后全部恢复) \r\n";
         $text .= "洞天财瓮-洞天宝钱: ".$user["current_home_coin"]."/".$user["max_home_coin"]." (将于".(new CommonService())->Sec2Time($user["home_coin_recovery_time"])."后到大储存上限) \r\n";
@@ -102,12 +103,12 @@ class YsService
         if($this->error){
             return $this->error;
         }
-        $account_list = (new YsApi($this->stuid,$this->stoken))->getAccountList();
+        $account_list = (new YsApi($this->stuid,$this->stoken,$this->cookis))->getAccountList();
         if(!is_array($account_list)){
             return $account_list;
         }
         $account = $account_list[0];
-        $user = (new YsApi($this->stuid,$this->stoken))->get_user_info($account['region'],$account['game_uid']);
+        $user = (new YsApi($this->stuid,$this->stoken,$this->cookis))->get_user_info($account['region'],$account['game_uid']);
         $text = "原粹树脂: ".$user["current_resin"]."/".$user["max_resin"]." (将于".(new CommonService())->Sec2Time($user["resin_recovery_time"])."后全部恢复) \r\n";
         $text .= "洞天财瓮-洞天宝钱: ".$user["current_home_coin"]."/".$user["max_home_coin"]." (将于".(new CommonService())->Sec2Time($user["home_coin_recovery_time"])."后到大储存上限) \r\n";
         $text .= "每日委托任务: ".$user["finished_task_num"]."/".$user["total_task_num"]."  \r\n";

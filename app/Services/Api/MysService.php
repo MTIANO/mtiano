@@ -17,7 +17,10 @@ class MysService
      */
     protected array $headers;
     
-    public function __construct($stuid = '',$stoken = ''){
+    public function __construct($stuid = '',$stoken = '',$cookie = ''){
+        if(!$cookie){
+            $cookie = env('MYS_COOKIE');
+        }
         $this->headers = [
             'DS'=> $this->get_ds(false,false),
             'cookie' => 'stuid='.$stuid.';stoken='.$stoken,
@@ -25,7 +28,7 @@ class MysService
             'x-rpc-app_version' => '2.7.0',
             'x-rpc-sys_version' => '6.0.1',
             'x-rpc-channel' => 'mihoyo',
-            'x-rpc-device_id' => strtoupper(str_replace('-','',Uuid::uuid3(Uuid::NAMESPACE_URL,env('MYS_COOKIE'))->toString())),
+            'x-rpc-device_id' => strtoupper(str_replace('-','',Uuid::uuid3(Uuid::NAMESPACE_URL,$cookie)->toString())),
             'x-rpc-device_name' => $this->getrandstr(8),
             'x-rpc-device_model' => 'Mi 10',
             'Referer' => 'https://app.mihoyo.com',
