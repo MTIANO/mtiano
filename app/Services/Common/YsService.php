@@ -124,6 +124,7 @@ class YsService
         if(($user["current_resin"] >= 120) || ($user["current_home_coin"] >= 1000) || $user['transformer']['recovery_time']['reached']){
             $first = '米游社提醒';
             $keyword2 = date('Y-m-d H:i:s');
+            dump($text);
             dump((new WeiXinService())->send($first,$text,$keyword2,'','',$cookie));
         }
         return true;

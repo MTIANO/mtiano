@@ -31,6 +31,6 @@ class Test extends Command
      */
     public function handle()
     {
-        dump((new \App\Services\Common\YsService(['id' => 35]))->get_user());
+        dump((new \App\Services\Common\YsService(['id' => 42]))->get_user());
     }
 }
