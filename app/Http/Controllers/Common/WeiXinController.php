@@ -41,11 +41,11 @@ class WeiXinController extends BaseController
         $msg = array (
             'ToUserName' => 'gh_03aa44ccfbb4',
             'FromUserName' => 'oERWv6qbxUaXC6Thly0ggeAkVilM',
-            'CreateTime' => '1654689638',
+            'CreateTime' => '1655199131',
             'MsgType' => 'text',
-            'Content' => 'UM_distinctid=181431c85cc8e9-0e93b75107fd01-6447264a-1fa400-181431c85cdcaa; _ga=GA1.2.779477119.1654688353; _gid=GA1.2.1169290039.1654688353; _MHYUUID=1cce2923-ee5a-47ae-84ca-3e78fb57dbb3; ltoken=jnLIQxLN7eSOsIybv5Kb2Dc7AqOLWfntlm8H4MZ3; ltuid=5606889; cookie_token=8hgxUBmHNw89JjwnsGvl43n3X93zQ8HKTNHugAGg; account_id=5606889; _gat=1; CNZZDATA1274689524=1438297071-1654685809-%7C1654685809; DEVICEFP_SEED_ID=8ce0c8211e10c60e; DEVICEFP_SEED_TIME=1654688745431; DEVICEFP=38d7ea80ec94e; login_uid=5606889; login_ticket=DqAbVkSFuEbgdHV3O8AvR4Wbl05OLam5Ynxxup82',
-            'MsgId' => '23689460290934637',
-            'Encrypt' => '6u3GWHxXjCiajLuefF01tF4fu+pJjF4nQHwB9ZLSWnjaIzvI8QyePEHlTTfEwT18dctB/BRHVxb21x+2340DGFcO+ZJpehfndxWTX7sYvpoQfihKOluzu5TbqHNJujgOCUlRsmz/8749XG2U2n2vM5uAPZWj8gqrBh2iMCbUjDf6UfuBxrzRc+lPFPi2BjJ2TXD/VRidWBIys6VAuHes5dTsaOre03WNPwhlMicsQTb8/Z7//muTI9DP+9+wHPF1bOREhioJ6aMmd2UIISVCxJYHv6okUq9TZvSIl0paAgicY03NYxAZoZP4n+IamJbLgLVTsW6Tunh/K8A7nA9xrHGA1wWbPI5C9kqo6wgKek8BO87t2wYrnwVWC8Pt569Cxw4fIfH+Z4T8gO+WM0du6whObfdENhDKR+7PmckQ5khDKAvrMq5K5ZCw9SsBZSVU+5FxiAgHqDK7Y6miXhzWRedwOPuiNpelgC0dTtKyeTXHE8aJHhk1XrOYfyQHgD9tMqe6ftBfL2gwLvE6Z9bvrl7+xyOhASZqYDViVfYqf9e6c6ziBVmiav5s1io+bpsG/Mchzf01gpBSSEEqbgKPKEognWPYhPqECGkwcJMXa6SbELw9emg5MijCipibEp27weaJEjWJSWaVswO4JDzvR28x0r8kgs7r8M8m3XSHnBDVHZLRsRIG7ive8DV5Vqe/zVYuP9WEiBWkXcFspoF4gB3vr/kHQat05yEdvdfSodMAZoo2Z6SF60PT9inTdVD38Tz9NuLRqiD2Y6GT81YBz+eXIBifLiPoOGPst8nHRN+awnWj0p7pA6QctX9GX2ushTbgllsz5kUvU/hJsfsHL9PNlceWZFX5e1v+HFGVR+i9pwiyogxxjXCs5XYo556ike858wcFRsBhIWvt2BqdXgb/mJ8nFcd+HdFQe4EdPqCfNeSZfUoK9km/jo5j8CI11cvbdaBDT+eAJiguIejAvTdz8EJ+f7JxK1eZD136G44lYfTSWaaaYG30xDoOE/A221Ld/1BA3HI6gRa7HZYqZr2oBsflajKlKpaRyczIRd5pQA3E9PDex0vPb9QaT0s8w+ISA7cP6u6sdxLjTTp5aSh8FprxQs7U9f2YjyJLip77euswbNK6Muv+sbdme9yqjp59XJmDQsJholbXIkJYMCUwtqkCAe0ihr/OhhTkn8s=',
+            'Content' => '原神',
+            'MsgId' => '23696752092471523',
+            'Encrypt' => 'j751QDtY8cUDHqkSFXcZEh7hRRhzEPH4YOrskHgizWIdmKfzl9v0cLieCHk4haz8667lh4RbANxJaBOGWHoLmUPlp60qV/0UjwOZFV48JKgHfrB8qRyEDfMEBiB+Y6786+uDAvb6gyVB1aMwBmVavDlF1iHxopN6uSb5bhSPLtDbyQGWeKTK3K1EwNV6rfNk1LJxXZlQCoEiU0Sa0gA7IZwUgys3tDVgp8Duk8Hkmo5CHQGAiLSzhYwou3OsktfO0qb53W8BjPdgr+vVP0VPjJQ5g0p3155zvgFr5P2x3cowVNYlTdNx80UAW8YmqinvEeaeQPrbPH3vtpfj1T5936LjcBBq+DV6OIZZI+QwhfJVbi7TgNTCBeaL7ZGzI8kFqkhnzoY+eiZb82NLR1NyIp+zpxXD5aqsYul7RhJJMGY=',
         );
         $user = (new MtUser())->getUserByWinXinId($msg['FromUserName']);
         $CommonService = new CommonService();
@@ -72,6 +72,8 @@ class WeiXinController extends BaseController
         if(!$user){
             $CommonService->doText($msg,'获取用户失败!');
         }
+        
+        
         //Log::channel('daily')->info($msg);
         switch ($msg['MsgType']){
             case'event':

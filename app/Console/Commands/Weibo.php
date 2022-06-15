@@ -84,7 +84,9 @@ class Weibo extends Command
                     foreach ($original_pictures as $value_img){
                         $file = file_get_contents($value_img);
                         $name = explode('/',$value_img);
-                        Storage::disk('weibo')->put($user_info['screen_name'].'/'.end($name), $file);
+                        $name = end($name);
+                        $name = explode('?',$name);
+                        Storage::disk('weibo')->put($user_info['screen_name'].'/'.$name[0], $file);
                     }
                 }
             }

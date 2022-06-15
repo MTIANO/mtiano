@@ -115,7 +115,7 @@ class CommonService
     public function addUser($msg)
     {
         $user = (new MtUser())->getUserByWinXinId($msg['FromUserName']);
-        Log::channel('daily')->info($user);
+        //Log::channel('daily')->info($user);
         if($user){
             $user = [
                 'status' => 1,

@@ -2,10 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\WeiboPush;
 use App\Services\Api\WeiXinService;
 use App\Services\Api\YsService;
 use App\Services\Common\MysService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class Test extends Command
@@ -31,6 +33,6 @@ class Test extends Command
      */
     public function handle()
     {
-        dump((new \App\Services\Common\YsService(['id' => 42]))->get_user());
+        $job = WeiboPush::dispatch(11111);
     }
 }
