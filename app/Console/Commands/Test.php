@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\WeiboPush;
+use App\Models\MtYsCookie;
 use App\Services\Api\WeiXinService;
 use App\Services\Api\YsService;
 use App\Services\Common\MysService;
@@ -33,6 +34,12 @@ class Test extends Command
      */
     public function handle()
     {
-        $job = WeiboPush::dispatch(11111);
+        /*$user_list = MtYsCookie::query()->get()->toArray();
+        foreach($user_list as $value){
+            WeiboPush::dispatch($value['user_id']);
+        }
+        dump($user_list);die;*/
+        //$job = WeiboPush::dispatch(11111);
+        //dump((new \App\Services\Common\YsService(['id' => 44]))->get_user());
     }
 }

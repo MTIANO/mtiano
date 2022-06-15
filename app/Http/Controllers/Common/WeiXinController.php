@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Common;
 
 
 use App\Models\MtUser;
+use App\Services\Api\WeiXinService;
 use App\Services\Common\CommonService;
 use App\Services\Common\ImgService;
 use App\Services\Common\YsService;
@@ -79,9 +80,11 @@ class WeiXinController extends BaseController
             case'event':
                 if($msg['Event'] === 'subscribe' ){
                     $text = '欢迎来到会员的世界!';
+                    (new WeiXinService())->send('关注通知','新增一位关注者',date('Y-m-d H:i:s'));
                     return $CommonService->doText($msg,$text);
                 }
                 if($msg['Event'] === 'unsubscribe' ){
+                    (new WeiXinService())->send('取消关注通知','失去一位关注者',date('Y-m-d H:i:s'));
                     $CommonService->disableUser($msg);
                     return true;
                 }

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Services\Api\WeiXinService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,15 +14,16 @@ use Illuminate\Support\Facades\Log;
 class WeiboPush implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
+    
+    public $cond;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($cond = [])
     {
-        //2
+        $this->cond = $cond;
     }
 
     /**
@@ -31,6 +33,7 @@ class WeiboPush implements ShouldQueue
      */
     public function handle()
     {
-        Log::channel('daily')->info(12312);
+       $text = (new \App\Services\Common\YsService(['id' => $this->cond]))->get_user();
+       (new WeiXinService())->send('测试提醒',$text,date('Y-m-d H:i:s'));
     }
 }
