@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Services\Api\WeiXinService;
+use App\Services\Common\WeiboService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,7 +34,6 @@ class WeiboPush implements ShouldQueue
      */
     public function handle()
     {
-       $text = (new \App\Services\Common\YsService(['id' => $this->cond]))->get_user();
-       (new WeiXinService())->send('测试提醒',$text,date('Y-m-d H:i:s'));
+        (new WeiboService())->saveWeibo($this->cond['user_info'],$this->cond['f_value']);
     }
 }
