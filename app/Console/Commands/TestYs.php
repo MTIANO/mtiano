@@ -11,14 +11,14 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-class Test extends Command
+class TestYs extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:test {user}';
+    protected $signature = 'command:testys {user}';
 
     /**
      * The console command description.
@@ -40,7 +40,6 @@ class Test extends Command
         }
         dump($user_list);die;*/
         //$job = WeiboPush::dispatch(11111);
-        dump($this->argument('user'));
-        //dump((new \App\Services\Common\YsService(['id' => $this->argument('user')]))->get_user());
+        dump((new \App\Services\Common\YsService(['id' => $this->argument('user')]))->get_user());
     }
 }
