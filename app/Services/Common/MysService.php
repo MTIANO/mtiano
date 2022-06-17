@@ -161,6 +161,7 @@ class MysService
             $this->con->error($is_sign);
             return false;
         }
+        
         if($is_sign['first_bind']){
             $this->con->error('旅行者'.$account['nickname'].'是第一次绑定米游社，请先手动签到一次');
             return false;
@@ -174,7 +175,8 @@ class MysService
             $this->con->info('旅行者'.$account['nickname'].'今天已经签到过了~今天获得的奖励是:'.$rewards);
             return true;
         }
-        $sign = (new YsService($this->stuid,$this->stoken))->sign($account['region'],$account['game_uid']);
+        $sign = (new YsService($this->stuid,$this->stoken,$this->cookis))->sign($account['region'],$account['game_uid']);
+        
         if($sign === true){
             $first = '米游社每日任务/签到完成通知!!';
             $keyword1 = '已连续签到'.$is_sign['total_sign_day']+1 .'天,今天获得的奖励是'.$rewards;
