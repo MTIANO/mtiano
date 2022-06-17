@@ -170,7 +170,7 @@ class MysService
             $keyword1 = '旅行者'.$account['nickname'].'今天已经签到过了~今天获得的奖励是:'.$rewards;
             $keyword2 = date('Y-m-d H:i:s');
             $item = MtUser::query()->where('id',$user_id)->value('winxin_id');
-            $this->con->info((new WeiXinService())->send($first,$keyword1,$keyword2,'','',$item));
+            //$this->con->info((new WeiXinService())->send($first,$keyword1,$keyword2,'','',$item));
             $this->con->info('旅行者'.$account['nickname'].'今天已经签到过了~今天获得的奖励是:'.$rewards);
             return true;
         }

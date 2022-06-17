@@ -166,6 +166,9 @@ class CommonService
             Cache::forget($stuid_key);
             Cache::forget($stoken_key);
         }
+        
+        
+        
         return '米游社cookis设置成功';
     }
     

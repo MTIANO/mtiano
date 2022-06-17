@@ -40,7 +40,9 @@ class Test extends Command
         }
         dump($user_list);die;*/
         //$job = WeiboPush::dispatch(11111);
-        dump($this->argument('user'));
+        //dump($this->argument('user'));
+        $user_list = MtYsCookie::query()->where('user_id',$this->argument('user'))->first()->toArray();
+        (new MysService($this,$user_list['cookie'],$user_list['user_id']))->ys_sign($this->argument('user'));
         //dump((new \App\Services\Common\YsService(['id' => $this->argument('user')]))->get_user());
     }
 }
