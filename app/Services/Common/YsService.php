@@ -121,12 +121,17 @@ class YsService
         }
         $text .= "参量质变仪: ".$transformer."  \r\n";
         
-        if(($user["current_resin"] >= 120) || ($user["current_home_coin"] >= 1000) || $user['transformer']['recovery_time']['reached']){
-            $first = '米游社提醒';
-            $keyword2 = date('Y-m-d H:i:s');
-            dump($text);
-            dump((new WeiXinService())->send($first,$text,$keyword2,'','',$cookie));
+        $redis_key = 'ys_remind_'.$cookie;
+        if(!Cache::get($redis_key)){
+            if(($user["current_resin"] >= 120) || ($user["current_home_coin"] >= 1000) || $user['transformer']['recovery_time']['reached']){
+                $first = '米游社提醒';
+                $keyword2 = date('Y-m-d H:i:s');
+                dump($text);
+                dump((new WeiXinService())->send($first,$text,$keyword2,'','',$cookie));
+                Cache::add($redis_key,1,86400);
+            }
         }
+        
         return true;
     }
 
