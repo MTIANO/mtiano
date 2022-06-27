@@ -9,6 +9,7 @@ use App\Models\MtWeiBoUser;
 use App\Services\Api\WeiBoService;
 use App\Services\Api\WeiXinService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class Weibo extends Command
@@ -46,14 +47,17 @@ class Weibo extends Command
                 $text[] = $f_value;
                 continue;
             }
+            $this->info('获取'.$user_info['screen_name'].'的微博开始');
             WeiboPush::dispatch(['user_info' => $user_info,'f_value' => $f_value]);
             //(new \App\Services\Common\WeiboService())->saveWeibo($user_info,$f_value);
             $this->info('获取'.$user_info['screen_name'].'的微博结束');
         }
-        if($num >= 5){
+        $key = 'weibo_push_cookie';
+        if($num >= 5 && Cache::get($key)){
             $first = '微博cookie过期提醒';
             $keyword2 = date('Y-m-d H:i:s');
             (new WeiXinService())->send($first,implode(',',$text),$keyword2);
+            Cache::add($key,1,3600);
         }
         $this->info('微博获取完成!');
     }

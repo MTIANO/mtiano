@@ -41,8 +41,16 @@ class Test extends Command
         dump($user_list);die;*/
         //$job = WeiboPush::dispatch(11111);
         //dump($this->argument('user'));
-        $user_list = MtYsCookie::query()->where('user_id',$this->argument('user'))->first()->toArray();
-        (new MysService($this,$user_list['cookie'],$user_list['user_id']))->ys_sign($this->argument('user'));
+    
+        $value_img = 'http://f.video.weibocdn.com/u0/A1VE75Nigx07Ugq9fUhW010412008x8d0E010.mp4?label=mp4_720p&template=720x1560.24.0&trans_finger=0dec003e4dad885964301ff5a1db7715&ori=0&ps=1CwnkDw1GXwCQx&Expires=1656345630&ssig=sOfJgYTkFr&KID=unistore,video';
+        $file = file_get_contents($value_img);
+        $name = explode('/',$value_img);
+        $name = end($name);
+        $name = explode('?',$name);
+        Storage::disk('weibo')->put('test/'.$name[0], $file);
+        //dump($url);die;
+        //$user_list = MtYsCookie::query()->where('user_id',$this->argument('user'))->first()->toArray();
+        //(new MysService($this,$user_list['cookie'],$user_list['user_id']))->ys_sign($this->argument('user'));
         //dump((new \App\Services\Common\YsService(['id' => $this->argument('user')]))->get_user());
     }
 }

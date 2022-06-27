@@ -107,6 +107,13 @@ class WeiboService
                 $first = $user_info['screen_name'].'更新了微博';
                 $weibo_url = 'https://weibo.com/'.$data['user_id'].'/'.$value['mblogid'];
                 (new WeiXinService())->send($first,$data['content'],$data['publish_time'],$weibo_url);
+                if($video_url){
+                    $video_file = file_get_contents($video_url);
+                    $video_name = explode('/',$video_file);
+                    $video_name = end($video_name);
+                    $video_name = explode('?',$video_name);
+                    Storage::disk('weibo')->put($user_info['screen_name'].'/'.$video_name[0], $video_file);
+                }
                 foreach ($original_pictures as $value_img){
                     $file = file_get_contents($value_img);
                     $name = explode('/',$value_img);
