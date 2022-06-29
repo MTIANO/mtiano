@@ -42,12 +42,15 @@ class Test extends Command
         //$job = WeiboPush::dispatch(11111);
         //dump($this->argument('user'));
     
-        $value_img = 'http://f.video.weibocdn.com/u0/A1VE75Nigx07Ugq9fUhW010412008x8d0E010.mp4?label=mp4_720p&template=720x1560.24.0&trans_finger=0dec003e4dad885964301ff5a1db7715&ori=0&ps=1CwnkDw1GXwCQx&Expires=1656345630&ssig=sOfJgYTkFr&KID=unistore,video';
-        $file = file_get_contents($value_img);
-        $name = explode('/',$value_img);
-        $name = end($name);
-        $name = explode('?',$name);
-        Storage::disk('weibo')->put('test/'.$name[0], $file);
+        /*$video_url = 'http://f.video.weibocdn.com/u0/lUzljx4ggx07XeeP6Bt601041200doMY0E010.mp4?label=mp4_720p&template=720x1560.24.0&ori=0&ps=1CwnkDw1GXwCQx&Expires=1656523192&ssig=MEuCidl%2FH%2B&KID=unistore,video';
+        $user_info['screen_name'] = '我是狗头萝莉';
+        if($video_url){
+            $video_file = file_get_contents($video_url);
+            $video_name = explode('/',$video_url);
+            $video_name = end($video_name);
+            $video_name = explode('?',$video_name);
+            Storage::disk('weibo')->put($user_info['screen_name'].'/'.$video_name[0], $video_file);
+        }*/
         //dump($url);die;
         //$user_list = MtYsCookie::query()->where('user_id',$this->argument('user'))->first()->toArray();
         //(new MysService($this,$user_list['cookie'],$user_list['user_id']))->ys_sign($this->argument('user'));

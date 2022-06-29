@@ -109,7 +109,7 @@ class WeiboService
                 (new WeiXinService())->send($first,$data['content'],$data['publish_time'],$weibo_url);
                 if($video_url){
                     $video_file = file_get_contents($video_url);
-                    $video_name = explode('/',$video_file);
+                    $video_name = explode('/',$video_url);
                     $video_name = end($video_name);
                     $video_name = explode('?',$video_name);
                     Storage::disk('weibo')->put($user_info['screen_name'].'/'.$video_name[0], $video_file);
