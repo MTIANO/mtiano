@@ -53,7 +53,7 @@ class Weibo extends Command
             $this->info('获取'.$user_info['screen_name'].'的微博结束');
         }
         $key = 'weibo_push_cookie';
-        if($num >= 5 && Cache::get($key)){
+        if($num >= 5 && !Cache::get($key)){
             $first = '微博cookie过期提醒';
             $keyword2 = date('Y-m-d H:i:s');
             (new WeiXinService())->send($first,implode(',',$text),$keyword2);
