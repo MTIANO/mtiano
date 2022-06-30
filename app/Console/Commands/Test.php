@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\WeiboPush;
 use App\Models\MtYsCookie;
+use App\Services\Api\WeiBoService;
 use App\Services\Api\WeiXinService;
 use App\Services\Api\YsService;
 use App\Services\Common\MysService;
@@ -34,8 +35,9 @@ class Test extends Command
      */
     public function handle()
     {
-        
-        $weibo_list = (new \App\Services\Api\WeiBoService())->get_mymblog($this->argument('user'));
+        $user_info = (new WeiBoService())->get_user_info(7418196413);
+        WeiboPush::dispatch(['user_info' => $user_info,'f_value' => 7418196413]);
+        /*$weibo_list = (new \App\Services\Api\WeiBoService())->get_mymblog($this->argument('user'));
         foreach ($weibo_list as $value){
             if($value['id'] === 4785366592651569){
                 if(isset($value['pic_infos']) && $value['pic_infos']){
@@ -49,7 +51,7 @@ class Test extends Command
             }
         }
         dump($original_pictures_live);
-        dump($original_pictures);die;
+        dump($original_pictures);die;*/
         
         
         

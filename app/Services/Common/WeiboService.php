@@ -84,7 +84,9 @@ class WeiboService
             if(isset($value['pic_infos']) && $value['pic_infos']){
                 foreach ($value['pic_infos'] as $pic_value){
                     $original_pictures[] = $pic_value['mw2000']['url'];
-                    $original_pictures_live[] = urldecode($pic_value['video']);
+                    if(isset($pic_value['video'])){
+                        $original_pictures_live[] = urldecode($pic_value['video']);
+                    }
                 }
             }
             $data = [
@@ -94,7 +96,7 @@ class WeiboService
                 'original_pictures' => implode(',',$original_pictures),
                 'original' => 1,
                 'video_url' => $video_url,
-                'live_url' => $original_pictures_live,
+                'live_url' => implode(',',$original_pictures_live),
                 'publish_place' => $value['region_name']??'',
                 'publish_time' => date('Y-m-d H:i:s',strtotime($value['created_at'])),
                 'publish_tool' => $value['source'],
