@@ -35,7 +35,7 @@ class Test extends Command
     public function handle()
     {
         
-        /*$weibo_list = (new \App\Services\Api\WeiBoService())->get_mymblog($this->argument('user'));
+        $weibo_list = (new \App\Services\Api\WeiBoService())->get_mymblog($this->argument('user'));
         foreach ($weibo_list as $value){
             if($value['id'] === 4785366592651569){
                 if(isset($value['pic_infos']) && $value['pic_infos']){
@@ -49,7 +49,7 @@ class Test extends Command
             }
         }
         dump($original_pictures_live);
-        dump($original_pictures);die;*/
+        dump($original_pictures);die;
         
         
         
