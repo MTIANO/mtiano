@@ -79,10 +79,12 @@ class WeiboService
         foreach ($weibo_list as $value){
             $weibo = MtWeiBo::query()->where('id',$value['id'])->first();
             $original_pictures = [];
+            $original_pictures_live = [];
             $video_url = $value['page_info']['media_info']['mp4_720p_mp4'] ?? '';
             if(isset($value['pic_infos']) && $value['pic_infos']){
                 foreach ($value['pic_infos'] as $pic_value){
                     $original_pictures[] = $pic_value['mw2000']['url'];
+                    $original_pictures_live[] = $pic_value['video'];
                 }
             }
             $data = [
@@ -120,6 +122,16 @@ class WeiboService
                     $name = end($name);
                     $name = explode('?',$name);
                     Storage::disk('weibo')->put($user_info['screen_name'].'/'.$name[0], $file);
+                }
+                if($original_pictures_live){
+                    foreach ($original_pictures_live as $live_value){
+                        $live_value = urldecode($live_value);
+                        $live_file = file_get_contents($live_value);
+                        $live_name = explode('/',$live_value);
+                        $live_name = end($live_name);
+                        $live_name = explode('?',$live_name);
+                        Storage::disk('weibo')->put($user_info['screen_name'].'/'.$live_name[0], $live_file);
+                    }
                 }
             }
         }
