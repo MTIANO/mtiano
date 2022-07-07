@@ -11,6 +11,7 @@
 
 namespace App\Services\Common;
 
+use App\Jobs\YsLogPush;
 use App\Models\MtBill;
 use App\Models\MtBogMsg;
 use App\Models\MtServiceBill;
@@ -191,6 +192,12 @@ class CommonService
     //处理消息
     public function manage($msg,$user): bool|string|array
     {
+    
+        if(str_contains($msg['Content'], 'webstatic.mihoyo.com')){
+            YsLogPush::dispatch(['user' => $user,'msg' => $msg]);
+            return '查询抽卡记录已入队,请稍后!';
+        }
+        
         if(str_contains($msg['Content'], '_MHYUUID')){
             return $this->setYsCookie($msg,$user);
         }

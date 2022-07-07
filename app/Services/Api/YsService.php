@@ -146,4 +146,15 @@ class YsService
         //substr(string,start,length);返回字符串的一部分
         return substr($randStr,0,$length);
     }
+    
+    public function getGachaLog($params){
+        $url = env('YS_CK_URL').'?'.$params;
+        $http = new \GuzzleHttp\Client;
+        $rel = $http->get($url);
+        $rel = json_decode((string)$rel->getBody(), true);
+        if($rel['retcode'] !== 0){
+            return $rel['message'];
+        }
+        return $rel['data']['list'];
+    }
 }

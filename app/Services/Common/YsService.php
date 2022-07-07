@@ -134,5 +134,87 @@ class YsService
         
         return true;
     }
+    
+    public function getGachaLog($user,$msg){
+        $page = 1;
+        $gacha_type = 301;
+        $end_id = 0;
+        $query = parse_url($msg['Content'])['query'];
+        $query = explode('&',$query);
+        $query_all = [];
+        foreach ($query as &$value){
+            $value_ = explode('=', $value);
+            $query_all[$value_[0]] = $value_[1];
+        }
+        $query_all = array_merge($query_all,['size' => 20,'page' => $page,'gacha_type' => $gacha_type,'end_id' => $end_id]);
+        $params = $this->url_encode($query_all);
+        $list = (new YsApi())->getGachaLog($params);
+        if(!is_array($list)){
+            $first = '抽卡记录';
+            $keyword2 = date('Y-m-d H:i:s');
+            dump((new WeiXinService())->send($first,$list,$keyword2,'','',$user['winxin_id']));
+            return $list;
+        }
+        $log_list = $list;
+    
+        while ($list){
+            $query_all['end_id'] = end($list)['id'];
+            $params = $this->url_encode($query_all);
+            $list = (new YsApi())->getGachaLog($params);
+            if(!is_array($list)){
+                $list = false;
+            }else{
+                $log_list = array_merge($log_list,$list);
+            }
+            sleep(1);
+        }
+        //dump(json_encode($log_list,JSON_UNESCAPED_UNICODE));
+        $log = array_reverse($log_list);
+        $goods = [];
+        $goods_ssr = [];
+        $num = 0;
+        foreach ($log as $key => $log_value){
+            $num++;
+            if($log_value['rank_type'] == 5){
+                $log_value['name'] = $log_value['name'].'_'.$key;
+                $goods_ssr[$log_value['name']] = [
+                    'count' => isset($goods_ssr[$log_value['name']]['count']) ? $goods_ssr[$log_value['name']]['count']+1 : 1,
+                    'num' => $num,
+                    'time' => $log_value['time'],
+                    'rank_type' => $log_value['rank_type'],
+                ];
+                $num=0;
+            }else{
+                $goods[$log_value['name']] = [
+                    'count' => isset($goods[$log_value['name']]['count']) ? $goods[$log_value['name']]['count']+1 : 1,
+                    'num' => $num,
+                    'time' => $log_value['time'],
+                    'rank_type' => $log_value['rank_type'],
+                ];
+            }
+        }
+        $key = array_column(array_values($goods), 'rank_type');
+        array_multisort($key, SORT_DESC, $goods);
+        $goods_ssr = array_reverse($goods_ssr);
+        $txt = "已".$num."抽未出金 \r\n";
+        $txt_ = [];
+        foreach ($goods_ssr as $key => $value){
+            $key = substr($key, 0, strrpos($key, "_"));
+            $txt_[] =$key."(".$value['num'].")";
+        }
+        $txt .= implode(',',$txt_);
+        $first = '抽卡记录';
+        $keyword2 = date('Y-m-d H:i:s');
+        dump((new WeiXinService())->send($first,$txt,$keyword2,'','',$user['winxin_id']));
+        dump($txt);die;
+    }
+    
+    function url_encode($params){
+        $tmp = [];
+        foreach ($params as $k => $param) {
+            $tmp[] = $k . '=' . $param;
+        }
+        return implode('&', $tmp);
+    }
 
 }
