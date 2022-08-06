@@ -22,10 +22,10 @@ class MysService
             $cookie = env('MYS_COOKIE');
         }
         $this->headers = [
-            'DS'=> $this->get_ds(false,false),
+            'DS'=> $this->get_ds(true,false),
             'cookie' => 'stuid='.$stuid.';stoken='.$stoken,
-            'x-rpc-client_type' => 2,
-            'x-rpc-app_version' => '2.7.0',
+            'x-rpc-client_type' => 5,
+            'x-rpc-app_version' => '2.34.1',
             'x-rpc-sys_version' => '6.0.1',
             'x-rpc-channel' => 'mihoyo',
             'x-rpc-device_id' => strtoupper(str_replace('-','',Uuid::uuid3(Uuid::NAMESPACE_URL,$cookie)->toString())),
@@ -149,11 +149,7 @@ class MysService
     
     public function get_ds($web,$web_old){
         if($web){
-            if($web_old){
-                $n = env('MIHOYOBBS_SALT_WEB_OLD');
-            }else{
-                $n = env('MIHOYOBBS_SALT_WEB');
-            }
+            $n = env('MIHOYOBBS_SALT_WEB');
         }else{
             $n = env('MIHOYOBBS_SALT');
         }

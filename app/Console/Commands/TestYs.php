@@ -40,6 +40,8 @@ class TestYs extends Command
         }
         dump($user_list);die;*/
         //$job = WeiboPush::dispatch(11111);
-        dump((new \App\Services\Common\YsService(['id' => $this->argument('user')]))->get_user());
+        //dump((new \App\Services\Common\YsService(['id' => $this->argument('user')]))->get_user());
+        $user_list = MtYsCookie::query()->where('user_id',15)->first()->toArray();
+        (new MysService($this,$user_list['cookie'],$user_list['user_id']))->AuthSign($user_list['user_id']);
     }
 }

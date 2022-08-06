@@ -25,7 +25,7 @@ class YsService
             'Accept' => 'application/json, text/plain, */*',
             'DS'=> $this->get_ds(true,true),
             'Origin' => 'https://webstatic.mihoyo.com',
-            'x-rpc-app_version' => '2.3.0',
+            'x-rpc-app_version' => '2.34.1',
             'cookie' => $cookis,
             'x-rpc-client_type' => 5,
             'x-rpc-device_id' => strtoupper(str_replace('-','',Uuid::uuid3(Uuid::NAMESPACE_URL,env('MYS_COOKIE'))->toString())),
@@ -116,11 +116,7 @@ class YsService
     
     public function get_ds($web,$web_old){
         if($web){
-            if($web_old){
-                $n = env('MIHOYOBBS_SALT_WEB_OLD');
-            }else{
-                $n = env('MIHOYOBBS_SALT_WEB');
-            }
+            $n = env('MIHOYOBBS_SALT_WEB');
         }else{
             $n = env('MIHOYOBBS_SALT');
         }

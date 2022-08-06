@@ -100,7 +100,7 @@ class MysService
         $this->con->info('新的一天，今天可以获得'.$task_list['can_get_points'].'个米游币');
         $this->con->info( '正在签到');
         $bbs_sign = (new MysApi($this->stuid,$this->stoken,$this->cookis))->BbsSign();
-        $this->con->info($bbs_sign);
+        $this->con->error($bbs_sign);
         sleep(1);
         $this->con->info('正在获取帖子列表');
         $bbs_list = (new MysApi($this->stuid,$this->stoken,$this->cookis))->getBbsList();
