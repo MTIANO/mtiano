@@ -66,6 +66,7 @@ class WeiXinController extends BaseController
         if(!$msg){
             return false;
         }
+        return $CommonService->doText($msg,'遭受恶意攻击，暂停服务!');
         $CommonService->addUser($msg);
         $user = (new MtUser())->getUserByWinXinId($msg['FromUserName']);
         if(!$user){
