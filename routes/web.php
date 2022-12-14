@@ -21,6 +21,7 @@ Route::match(['get', 'post'],'/', [WeiXinController::class,'index']);
 
 Route::match(['get', 'post'],'first_valid', [WeiXinController::class,'firstValid']);
 Route::match(['get', 'post'],'test', [WeiXinController::class,'test']);
+Route::match(['get', 'post'],'openapi', [WeiXinController::class,'openapi']);
 Route::prefix('Weibo')->group(function () {
     Route::get('push', [WeiboController::class,'push']);
 });

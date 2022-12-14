@@ -24,7 +24,7 @@ use function Symfony\Component\Translation\t;
 
 class CommonService
 {
-    
+
     private array $_msg_template = [
         'text' => '<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content></xml>',//文本回复XML模板
         'image' => '<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[image]]></MsgType><Image><MediaId><![CDATA[%s]]></MediaId></Image></xml>',//图片回复XML模板
@@ -32,7 +32,7 @@ class CommonService
         'news' => '<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[news]]></MsgType><ArticleCount>%s</ArticleCount><Articles>%s</Articles></xml>',// 新闻主体
         'news_item' => '<item><Title><![CDATA[%s]]></Title><Description><![CDATA[%s]]></Description><PicUrl><![CDATA[%s]]></PicUrl><Url><![CDATA[%s]]></Url></item>',//某个新闻模板
     ];
-    
+
     public static $OK = 0;
     public static $ValidateSignatureError = -40001;
     public static $ParseXmlError = -40002;
@@ -45,10 +45,10 @@ class CommonService
     public static $EncodeBase64Error = -40009;
     public static $DecodeBase64Error = -40010;
     public static $GenReturnXmlError = -40011;
-    
+
     public static $block_size = 32;
-    
-    
+
+
     //公众号检查
     public function checkSignature($get){
         if($get['signature'] && $get['timestamp'] && $get['nonce']){
@@ -68,7 +68,7 @@ class CommonService
             }
         }
     }
-    
+
     //获取内容
     public function getMsg(){
         $postxml = file_get_contents('php://input');
@@ -77,7 +77,7 @@ class CommonService
         $data = json_decode($data,true);
         return $data;
     }
-    
+
     //拼接文本
     public function doText($msg,$text=''): string
     {
@@ -85,7 +85,7 @@ class CommonService
         $from = $msg['ToUserName'];
         return sprintf($this->_msg_template['text'], $to,$from, time(), $text);
     }
-    
+
     //拼接图片
     public function doImg($msg,$text=''): string
     {
@@ -93,7 +93,7 @@ class CommonService
         $from = $msg['ToUserName'];
         return sprintf($this->_msg_template['image'], $to,$from, time(), $text['media_id']);
     }
-    
+
     //获取token
     public function getAccessToken(){
         $key = 'weixin:accesstoken';
@@ -111,7 +111,7 @@ class CommonService
         //}
         return $access_token;
     }
-    
+
     //添加用户
     public function addUser($msg)
     {
@@ -125,7 +125,7 @@ class CommonService
             if($rel){
                 return true;
             }
-    
+
             return false;
         }
         $user = [
@@ -137,8 +137,8 @@ class CommonService
             return false;
         }
     }
-    
-    
+
+
     //取消关注
     public function disableUser($msg){
         $user = (new MtUser())->getUserByWinXinId($msg['FromUserName']);
@@ -155,7 +155,7 @@ class CommonService
             return false;
         }
     }
-    
+
     public function setYsCookie($msg,$user){
         $stuid_key = 'stuid_key_'.$user['id'];
         $stoken_key = 'stoken_key_'.$user['id'];
@@ -167,81 +167,81 @@ class CommonService
             Cache::forget($stuid_key);
             Cache::forget($stoken_key);
         }
-        
-        
-        
+
+
+
         return '米游社cookis设置成功';
     }
-    
+
     public function isLinkBog($msg,$user){
         $is_link = MtBogMsg::query()->where('user_id', $user['id'],)->orderByDesc('created_at')->first();
         if(!$is_link){
             return false;
         }
-        
+
         if($is_link['msg'] === 'bogend'){
             return false;
         }
-        
+
         if((time() - strtotime($is_link['created_at'])) >= 600){
             return false;
         }
         return true;
     }
-    
+
     //处理消息
     public function manage($msg,$user): bool|string|array
     {
-    
+
         if(str_contains($msg['Content'], 'webstatic.mihoyo.com')){
             YsLogPush::dispatch(['user' => $user,'msg' => $msg]);
             return '查询抽卡记录已入队,请稍后!';
         }
-        
+
         if(str_contains($msg['Content'], '_MHYUUID')){
             return $this->setYsCookie($msg,$user);
         }
-        
+
         if($msg['Content'] === '原神'){
             return (new YsService($user))->get_user();
         }
-    
+
         if($msg['Content'] === 'bogend'){
             return (new BogService())->bogEnd($msg,$user);
         }
-        
+
         if($msg['Content'] === 'bog'){
             return (new BogService())->bogStart($msg,$user);
         }
-    
+
         if($this->isLinkBog($msg,$user) === true){
             return (new BogService())->bog($msg,$user);
         }
-    
+
         if($msg['Content'] === '上传图片'){
             return (new ImgService())->uploadImg($msg);
         }
-    
+
         if($msg['Content'] === '图片'){
             return (new ImgService())->getRandImg($msg);
         }
-    
+
         if($msg['Content'] === '老黄历'){
             return $this->lhl($user);
         }
-        
+
         if($msg['Content'] === '账单'){
             return $this->todayBills($user);
         }
-    
+
         if($msg['Content'] === '昨日账单'){
             return $this->yesterdayBills($user);
         }
-    
+
         if(str_contains($msg['Content'], '发送给猪头')){
             return $this->sendMsgToZhu($user['id'],$msg);
         }
-        
+
         $Content = explode('-',$msg['Content']);
         //记录账单
         if(count($Content) === 4){
@@ -249,7 +249,7 @@ class CommonService
         }
         return false;
     }
-    
+
     public function lhl($user){
         $url = "http://v.juhe.cn/laohuangli/d";
         $data = [
@@ -299,16 +299,16 @@ class CommonService
 ',$text);
         }
     }
-    
-    
+
+
     //发送账单给肥猪
     public function sendMsgToZhu($user_id,$msg){
         $url = "https://tui.juhe.cn/api/plus/pushApi";
         $token = env('QIYEWEIXIN_TOKEN');
         $service_id = env('QIYEWEIXIN_ZHU_SERVICEID');
-    
+
         $Content = explode('-',$msg['Content']);
-        
+
         $bill_data = [
             'user_id' => $user_id,
             'date' => date('Ymd'),
@@ -320,7 +320,7 @@ class CommonService
         if(!$rel){
             return '记录失败';
         }
-        
+
         $title = "账单推送";
         $content = '会员服务已结束，本次服务为'.$Content[1].'，服务金额为'.$Content[2].'元人民币，服务是否满意。请给五星好评并wx红包支付服务费。';
         $doc_type = "txt";
@@ -331,7 +331,7 @@ class CommonService
             'content' => $content,
             'doc_type' => $doc_type
         ];
-        
+
         $http = new \GuzzleHttp\Client;
         $rel = $http->post($url,['form_params' => $data]);
         $rel = json_decode((string)$rel->getBody(), true);
@@ -341,7 +341,7 @@ class CommonService
             return $rel['reason'];
         }
     }
-    
+
     //昨日账单
     public function yesterdayBills($user): bool|string
     {
@@ -373,7 +373,7 @@ class CommonService
         return implode('
 ',$text);
     }
-    
+
     //今日账单
     public function todayBills($user): bool|string
     {
@@ -405,8 +405,8 @@ class CommonService
         return implode('
 ',$text);
     }
-    
-    
+
+
     //保存账单
     public function saveBills($user_id,$bills){
         $bill_data = [
@@ -425,19 +425,19 @@ class CommonService
         if(!$rel){
             return false;
         }
-    
+
         return true;
     }
-    
-    
+
+
     public function getUserInfo($openid){
         $http = new \GuzzleHttp\Client;
         $url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=" . $this->getAccessToken() . "&openid=" . $openid;
         $user = $http->get($url);
         return json_decode($user->getBody(),true);
     }
-    
-    
+
+
     /**
      * 对密文进行解密
      * @param string $encrypted 需要解密的密文
@@ -445,17 +445,17 @@ class CommonService
      */
     public function decrypt($encrypted, $appid)
     {
-        
+
         try {
             //使用BASE64对需要解密的字符串进行解码
             $ciphertext_dec = base64_decode($encrypted);
             $module = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
             $iv = substr($this->key, 0, 16);
             mcrypt_generic_init($module, $this->key, $iv);
-    
+
             $decrypted = openssl_decrypt($ciphertext_dec, 'AES-256-CBC', $this->key, OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING, $iv);
-    
-    
+
+
             //解密
             $decrypted = mdecrypt_generic($module, $ciphertext_dec);
             mcrypt_generic_deinit($module);
@@ -463,8 +463,8 @@ class CommonService
         } catch (Exception $e) {
             return array(self::$DecryptAESError, null);
         }
-        
-        
+
+
         try {
             //去除补位字符
             $result = $this->decode($decrypted);
@@ -483,9 +483,9 @@ class CommonService
         if ($from_appid != $appid)
             return array(self::$ValidateAppidError, null);
         return array(0, $xml_content);
-        
+
     }
-    
+
     /**
      * 对需要加密的明文进行填充补位
      * @param $text 需要进行填充补位操作的明文
@@ -507,7 +507,7 @@ class CommonService
         }
         return $text . $tmp;
     }
-    
+
     /**
      * 对解密后的明文进行补位删除
      * @param decrypted 解密后的明文
@@ -515,14 +515,14 @@ class CommonService
      */
     function decode($text)
     {
-        
+
         $pad = ord(substr($text, -1));
         if ($pad < 1 || $pad > 32) {
             $pad = 0;
         }
         return substr($text, 0, (strlen($text) - $pad));
     }
-    
+
     function Sec2Time($time){
         if(is_numeric($time)){
             $value = array(
@@ -549,7 +549,7 @@ class CommonService
             //return (array) $value;
             $t=$value["days"] ."天". $value["hours"] ."小时". $value["minutes"] ."分".$value["seconds"]."秒";
             Return $t;
-            
+
         }else{
             return (bool) FALSE;
         }
