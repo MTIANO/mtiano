@@ -101,7 +101,8 @@ class WeiXinController extends BaseController
                 }
                 if($msg['Event'] === 'CLICK' ){
                     if($msg['EventKey'] === 'YS'){
-                        return $CommonService->doText($msg,(new YsService($user))->get_user());
+                        return $CommonService->doText($msg,'遭受攻击，暂停服务');
+                        //return $CommonService->doText($msg,(new YsService($user))->get_user());
                     }
                 }
             case'text':
