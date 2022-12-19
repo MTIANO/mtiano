@@ -8,7 +8,7 @@ use Ramsey\Uuid\Uuid;
 
 class WeiXinService
 {
-    
+
     public function getToken(){
         $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.env('WEIXIN_APPID').'&secret='.env('WEIXIN_APPSECRET');
         $http = new \GuzzleHttp\Client;
@@ -19,7 +19,7 @@ class WeiXinService
         }
         return $rel;
     }
-    
+
     public function send($first,$keyword1,$keyword2,$sand_url = '',$remark = '点击查看内容',$touser='oERWv6qbxUaXC6Thly0ggeAkVilM'){
         $access_token = $this->getToken();
         if(!is_array($access_token)){
@@ -28,7 +28,7 @@ class WeiXinService
         $access_token = $access_token['access_token'];
         $url = 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token='.$access_token;
         $http = new \GuzzleHttp\Client;
-        
+
         $msg = [
             'touser' => $touser,
             'template_id' => 'eUDAM5lz9Sz_zzWzu9UnrHNS6NpIhsbktnl_E7kLJTI',
@@ -63,7 +63,7 @@ class WeiXinService
         }
         return $rel['errmsg'];
     }
-    
+
     public function menu_create(){
         $access_token = $this->getToken();
         if(!is_array($access_token)){
@@ -80,7 +80,7 @@ class WeiXinService
             ]
         ];
         $data = [
-            'body' => urldecode(json_encode($msg))
+            'body' => json_encode($msg, JSON_THROW_ON_ERROR)
         ];
         $rel = $http->post($url,$data);
         $rel = json_decode((string)$rel->getBody(), true);
@@ -90,7 +90,7 @@ class WeiXinService
         }
         return $rel['errmsg'];
     }
-    
+
     public function menu_del(){
         $access_token = $this->getToken();
         if(!is_array($access_token)){
@@ -107,7 +107,7 @@ class WeiXinService
         }
         return $rel['errmsg'];
     }
-    
+
     public function get_user(){
         $access_token = $this->getToken();
         if(!is_array($access_token)){
@@ -120,5 +120,31 @@ class WeiXinService
         $rel = json_decode((string)$rel->getBody(), true);
         return $rel['data']['openid'];
     }
-    
+
+    public function custom_text($open_id,$text){
+        $access_token = $this->getToken();
+        if(!is_array($access_token)){
+            return $access_token;
+        }
+        $access_token = $access_token['access_token'];
+        $url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$access_token;
+        $msg = [
+            'touser' => $open_id,
+            'msgtype' => 'text',
+            'text' => [
+                'content' => $text
+            ],
+        ];
+        $data = [
+            'body' => json_encode($msg,JSON_UNESCAPED_UNICODE)
+        ];
+        $http = new \GuzzleHttp\Client;
+        $rel = $http->post($url,$data);
+        $rel = json_decode((string)$rel->getBody(), true);
+        if($rel['errcode'] === 0){
+            return true;
+        }
+        return $rel['errmsg'];
+    }
+
 }

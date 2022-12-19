@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Common;
 
 
+use App\Jobs\OpenApiPush;
 use App\Models\MtUser;
 use App\Services\Api\OpenApiService;
 use App\Services\Api\WeiXinService;
@@ -30,27 +31,8 @@ class WeiXinController extends BaseController
         return view('welcome',$data);
     }
 
-    public function openapi(){
-        //$asd = (new OpenApiService())->models();
-        $asd = (new OpenApiService())->completions('宇宙的秘密');
-        $choices = $asd['choices'];
-        $text = '';
-        foreach ($choices as $value){
-            $text .= $value['text'];
-        }
-        dump($text);die;
-    }
-
     public function test(){
-
-        /*$url = 'http://openapi.baidu.com/oauth/2.0/authorize?response_type=token&redirect_uri=http://www.czw-mtiano.cn/Baidu/callback&scope=basic,netdisk&client_id='.env('BAIDU_PAN_APPKEY');
-        dump($url);
-        $http = new \GuzzleHttp\Client;
-        $user = $http->get($url);
-        $ad = json_decode($user->getBody(),true);
-        dump($ad);die;*/
-
-
+        dump(1231);die;
         $msg = array (
             'ToUserName' => 'gh_03aa44ccfbb4',
             'FromUserName' => 'oERWv6qbxUaXC6Thly0ggeAkVilM',
@@ -106,13 +88,8 @@ class WeiXinController extends BaseController
                     }
                 }
             case'text':
-                $open = (new OpenApiService())->completions($msg['Content']);
-                $choices = $open['choices'];
-                $text = '';
-                foreach ($choices as $value){
-                    $text .= $value['text'];
-                }
-
+                OpenApiPush::dispatch(['user_info' => $msg,'text' => $msg['Content']]);
+                return $CommonService->doText($msg,'回答生成中，请稍等！');
                 /*$text = $CommonService->manage($msg,$user);
                 if($text === false){
                     $text = '指令无效,更多功能指令请联系本人!(目前开放:老黄历, 图片, bog)';
@@ -122,9 +99,9 @@ class WeiXinController extends BaseController
 
                 if(is_array($text)){
                     return $CommonService->doImg($msg,$text);
-                }*/
+                }
 
-                return $CommonService->doText($msg,$text);
+                return $CommonService->doText($msg,$text);*/
         }
     }
 
