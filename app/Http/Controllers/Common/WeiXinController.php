@@ -32,7 +32,17 @@ class WeiXinController extends BaseController
     }
 
     public function test(){
-        dump(1231);die;
+        //dump(123);die;
+        $open = (new OpenApiService())->completions('PHP的strtolower()和strtoupper()函数在安装非中文系统的服务器下可能会导致将汉字转换为乱码，请写两个替代的函数实现兼容Unicode文字的字符串大小写转换');
+        $choices = $open['choices'];
+        $text = '';
+        foreach ($choices as $value){
+            $text .= $value['text'];
+        }
+        $lines = explode("\n\n", $text);
+        array_shift($lines);
+        $text = implode("\n\n", $lines);
+        dump($text);die;
         $msg = array (
             'ToUserName' => 'gh_03aa44ccfbb4',
             'FromUserName' => 'oERWv6qbxUaXC6Thly0ggeAkVilM',
@@ -89,7 +99,7 @@ class WeiXinController extends BaseController
                 }
             case'text':
                 OpenApiPush::dispatch(['user_info' => $msg,'text' => $msg['Content']]);
-                return $CommonService->doText($msg,'回答生成中，请稍等！');
+                //return $CommonService->doText($msg,'回答生成中，请稍等！');
                 /*$text = $CommonService->manage($msg,$user);
                 if($text === false){
                     $text = '指令无效,更多功能指令请联系本人!(目前开放:老黄历, 图片, bog)';

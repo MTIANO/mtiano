@@ -128,6 +128,9 @@ class WeiXinService
         }
         $access_token = $access_token['access_token'];
         $url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$access_token;
+        $lines = explode("\n\n", $text);
+        array_shift($lines);
+        $text = implode("\n\n", $lines);
         $msg = [
             'touser' => $open_id,
             'msgtype' => 'text',
