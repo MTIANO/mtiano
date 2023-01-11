@@ -38,7 +38,10 @@ return [
             'driver' => 'local',
             'root' => '/www/wwwroot/weibo/img',
         ],
-
+        'gzh' => [
+            'driver' => 'local',
+            'root' => '/www/wwwroot/gzh',
+        ],
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

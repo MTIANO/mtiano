@@ -84,7 +84,6 @@ class WeiXinService
         ];
         $rel = $http->post($url,$data);
         $rel = json_decode((string)$rel->getBody(), true);
-        dump($rel);die;
         if($rel['errcode'] === 0){
             return true;
         }
@@ -101,7 +100,6 @@ class WeiXinService
         $http = new \GuzzleHttp\Client;
         $rel = $http->get($url);
         $rel = json_decode((string)$rel->getBody(), true);
-        dump($rel);die;
         if($rel['errcode'] === 0){
             return true;
         }
@@ -121,23 +119,33 @@ class WeiXinService
         return $rel['data']['openid'];
     }
 
-    public function custom_text($open_id,$text){
+    public function custom_text($open_id,$text,$type='text'){
         $access_token = $this->getToken();
         if(!is_array($access_token)){
             return $access_token;
         }
         $access_token = $access_token['access_token'];
         $url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$access_token;
-        $lines = explode("\n\n", $text);
-        array_shift($lines);
-        $text = implode("\n\n", $lines);
-        $msg = [
-            'touser' => $open_id,
-            'msgtype' => 'text',
-            'text' => [
-                'content' => $text
-            ],
-        ];
+        if($type === 'mpnews'){
+            $msg = [
+                'touser' => $open_id,
+                'msgtype' => 'mpnews',
+                'mpnews' => [
+                    'media_id' => $text
+                ],
+            ];
+        }else{
+            $lines = explode("\n\n", $text);
+            array_shift($lines);
+            $text = implode("\n\n", $lines);
+            $msg = [
+                'touser' => $open_id,
+                'msgtype' => 'text',
+                'text' => [
+                    'content' => $text
+                ],
+            ];
+        }
         $data = [
             'body' => json_encode($msg,JSON_UNESCAPED_UNICODE)
         ];
@@ -148,6 +156,50 @@ class WeiXinService
             return true;
         }
         return $rel['errmsg'];
+    }
+
+    public function draft_add($data){
+        $access_token = $this->getToken();
+        if(!is_array($access_token)){
+            return $access_token;
+        }
+        $access_token = $access_token['access_token'];
+        $url = 'https://api.weixin.qq.com/cgi-bin/draft/add?access_token='.$access_token;
+
+        $post = [
+            'articles' => $data
+        ];
+        $post = [
+            'body' => json_encode($post,JSON_UNESCAPED_UNICODE)
+        ];
+        $http = new \GuzzleHttp\Client;
+        $rel = $http->post($url,$post);
+        $rel = json_decode((string)$rel->getBody(), true);
+        if(isset($rel['errcode']) && $rel['errcode']){
+            return false;
+        }
+        return $rel['media_id'];
+    }
+
+    public function batchget_material($type = 'image',$offset = 0,$count=20){
+        $access_token = $this->getToken();
+        if(!is_array($access_token)){
+            return $access_token;
+        }
+        $access_token = $access_token['access_token'];
+        $url = 'https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token='.$access_token;
+        $post = [
+            'type' => $type,
+            'offset' => $offset,
+            'count' => $count,
+        ];
+        $post = [
+            'body' => json_encode($post,JSON_UNESCAPED_UNICODE)
+        ];
+        $http = new \GuzzleHttp\Client;
+        $rel = $http->post($url,$post);
+        $rel = json_decode((string)$rel->getBody(), true);
+        return $rel;
     }
 
 }

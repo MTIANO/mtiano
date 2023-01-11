@@ -40,7 +40,21 @@ class OpenApiPush implements ShouldQueue
             foreach ($choices as $value){
                 $text .= $value['text'];
             }
-            (new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$text);
+
+            if(strlen($text) >= 600){
+                $data = [
+                    [
+                        'title' => $this->cond['text'].'-回复',
+                        'author' => 'czw',
+                        'content' => $text,
+                        'thumb_media_id' => "2c0geqIdBXLD1qjOERPKr5TgdQbQTuIllAcyjdKddknAZ1YJocbNGlzFewYEwgcK",
+                    ]
+                ];
+                $media_id = (new WeiXinService())->draft_add($data);
+                (new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$media_id,'mpnews');
+            }else{
+                (new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$text);
+            }
         }catch (Exception $e) {
             dump($e->getTrace());
         }
