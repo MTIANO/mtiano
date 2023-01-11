@@ -41,7 +41,7 @@ class OpenApiPush implements ShouldQueue
                 $text .= $value['text'];
             }
 
-            if(strlen($text) >= 600){
+            if(strlen($text) >= 1200){
                 $data = [
                     [
                         'title' => $this->cond['text'].'-回复',
