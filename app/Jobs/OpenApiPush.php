@@ -37,12 +37,12 @@ class OpenApiPush implements ShouldQueue
             try {
                 $open = (new OpenApiService())->completions($this->cond['text']);
                 $choices = $open['choices'];
+                $text = '';
+                foreach ($choices as $value){
+                    $text .= $value['text'];
+                }
             }catch (Exception $e) {
-                $choices = $e->getMessage();
-            }
-            $text = '';
-            foreach ($choices as $value){
-                $text .= $value['text'];
+                $text = $e->getMessage();
             }
 
             if(strlen($text) >= 1200){
@@ -60,7 +60,7 @@ class OpenApiPush implements ShouldQueue
                 (new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$text);
             }
         }catch (Exception $e) {
-            dump($e->getTrace());
+            dump($e->getMessage());
         }
     }
 }
