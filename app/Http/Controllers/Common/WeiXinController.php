@@ -10,6 +10,7 @@ use App\Services\Api\WeiXinService;
 use App\Services\Common\CommonService;
 use App\Services\Common\ImgService;
 use App\Services\Common\YsService;
+use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -32,6 +33,13 @@ class WeiXinController extends BaseController
     }
 
     public function test(){
+        try {
+        $open = (new OpenApiService())->completions('php数组并集');
+            dump($open);die;
+        }catch (Exception $e) {
+            dump(123);
+            dump($e->getMessage());die;
+        }
     }
 
     public function firstValid(Request $request){

@@ -34,8 +34,12 @@ class OpenApiPush implements ShouldQueue
     public function handle()
     {
         try {
-            $open = (new OpenApiService())->completions($this->cond['text']);
-            $choices = $open['choices'];
+            try {
+                $open = (new OpenApiService())->completions($this->cond['text']);
+                $choices = $open['choices'];
+            }catch (Exception $e) {
+                $choices = $e->getMessage();
+            }
             $text = '';
             foreach ($choices as $value){
                 $text .= $value['text'];
