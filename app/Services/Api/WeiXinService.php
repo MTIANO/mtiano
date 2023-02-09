@@ -135,9 +135,6 @@ class WeiXinService
                 ],
             ];
         }else{
-            $lines = explode("\n\n", $text);
-            array_shift($lines);
-            $text = implode("\n\n", $lines);
             $msg = [
                 'touser' => $open_id,
                 'msgtype' => 'text',

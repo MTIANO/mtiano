@@ -42,6 +42,9 @@ class OpenApiPush implements ShouldQueue
                 foreach ($choices as $value){
                     $text .= $value['text'];
                 }
+                $lines = explode("\n\n", $text);
+                array_shift($lines);
+                $text = implode("\n\n", $lines);
             }catch (Exception $e) {
                 $text = $e->getMessage();
             }
@@ -57,10 +60,13 @@ class OpenApiPush implements ShouldQueue
                     ]
                 ];
                 $media_id = (new WeiXinService())->draft_add($data);
-                dump($media_id);
-                dump((new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$media_id,'mpnews'));
+                dump('发送'.$media_id);
+                $rel = (new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$media_id,'mpnews');
+                dump($rel);
             }else{
-                dump((new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$text));
+                dump('发送');
+                $rel = (new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$text);
+                dump($rel);
             }
             dump(true);
         }catch (Exception $e) {
