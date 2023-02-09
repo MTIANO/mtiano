@@ -36,6 +36,7 @@ class OpenApiPush implements ShouldQueue
         try {
             try {
                 $open = (new OpenApiService())->completions($this->cond['text']);
+                dump($open);
                 $choices = $open['choices'];
                 $text = '';
                 foreach ($choices as $value){
@@ -44,8 +45,9 @@ class OpenApiPush implements ShouldQueue
             }catch (Exception $e) {
                 $text = $e->getMessage();
             }
-
+            dump($text);
             if(strlen($text) >= 1200){
+                dump('大于1200字');
                 $data = [
                     [
                         'title' => $this->cond['text'].'-回复',
@@ -55,10 +57,12 @@ class OpenApiPush implements ShouldQueue
                     ]
                 ];
                 $media_id = (new WeiXinService())->draft_add($data);
-                (new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$media_id,'mpnews');
+                dump($media_id);
+                dump((new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$media_id,'mpnews'));
             }else{
-                (new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$text);
+                dump((new WeiXinService())->custom_text($this->cond['user_info']['FromUserName'],$text));
             }
+            dump(true);
         }catch (Exception $e) {
             dump($e->getMessage());
         }
