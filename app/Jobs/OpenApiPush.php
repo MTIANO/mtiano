@@ -40,7 +40,7 @@ class OpenApiPush implements ShouldQueue
                 $choices = $open['choices'];
                 $text = '';
                 foreach ($choices as $value){
-                    $text .= $value['text'];
+                    $text .= $value['message']['content'];
                 }
                 $lines = explode("\n\n", $text);
                 array_shift($lines);

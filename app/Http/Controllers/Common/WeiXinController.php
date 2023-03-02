@@ -34,8 +34,10 @@ class WeiXinController extends BaseController
 
     public function test(){
         try {
-        $open = (new OpenApiService())->completions('php数组并集');
-            dump($open);die;
+        $open = (new OpenApiService())->completions('php数组拆分');
+            dump($open['choices'][0]['message']['content']);
+            dump($open);
+            die;
         }catch (Exception $e) {
             dump(123);
             dump($e->getMessage());die;

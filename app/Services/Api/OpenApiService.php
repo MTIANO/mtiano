@@ -18,16 +18,20 @@ class OpenApiService
     }
 
     public function completions($Content){
-        $url = 'https://api.openai.com/v1/completions';
+        $url = 'https://api.openai.com/v1/chat/completions';
         $http = new \GuzzleHttp\Client;
+        $message[] = [
+            'role' => 'user',
+            'content' => $Content,
+        ];
         $data = [
             'headers' => [
                 'Authorization' => 'Bearer '.env('OPEN_API'),
                 'Content-Type' => 'application/json'
             ],
             'body' => json_encode([
-                'model' => 'text-davinci-003',
-                'prompt' => $Content,
+                'model' => 'gpt-3.5-turbo',
+                'messages' => $message,
                 'temperature' => 0,
                 'max_tokens' => 4000,
             ], JSON_THROW_ON_ERROR)
