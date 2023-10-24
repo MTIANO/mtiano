@@ -192,62 +192,65 @@ class CommonService
     //处理消息
     public function manage($msg,$user): bool|string|array
     {
+        try{
+            if(str_contains($msg['Content'], 'webstatic.mihoyo.com')){
+                YsLogPush::dispatch(['user' => $user,'msg' => $msg]);
+                return '查询抽卡记录已入队,请稍后!';
+            }
 
-        if(str_contains($msg['Content'], 'webstatic.mihoyo.com')){
-            YsLogPush::dispatch(['user' => $user,'msg' => $msg]);
-            return '查询抽卡记录已入队,请稍后!';
-        }
+            if(str_contains($msg['Content'], '_MHYUUID')){
+                return $this->setYsCookie($msg,$user);
+            }
 
-        if(str_contains($msg['Content'], '_MHYUUID')){
-            return $this->setYsCookie($msg,$user);
-        }
+            if($msg['Content'] === '原神'){
+                return (new YsService($user))->get_user();
+            }
 
-        if($msg['Content'] === '原神'){
-            return (new YsService($user))->get_user();
-        }
+            /*if($msg['Content'] === 'bogend'){
+                return (new BogService())->bogEnd($msg,$user);
+            }
 
-        if($msg['Content'] === 'bogend'){
-            return (new BogService())->bogEnd($msg,$user);
-        }
+            if($msg['Content'] === 'bog'){
+                return (new BogService())->bogStart($msg,$user);
+            }
 
-        if($msg['Content'] === 'bog'){
-            return (new BogService())->bogStart($msg,$user);
-        }
+            if($this->isLinkBog($msg,$user) === true){
+                return (new BogService())->bog($msg,$user);
+            }*/
 
-        if($this->isLinkBog($msg,$user) === true){
-            return (new BogService())->bog($msg,$user);
-        }
+            if($msg['Content'] === '上传图片'){
+                return (new ImgService())->uploadImg($msg);
+            }
 
-        if($msg['Content'] === '上传图片'){
-            return (new ImgService())->uploadImg($msg);
-        }
+            if($msg['Content'] === '图片'){
+                return (new ImgService())->getRandImg($msg);
+            }
 
-        if($msg['Content'] === '图片'){
-            return (new ImgService())->getRandImg($msg);
-        }
+            if($msg['Content'] === '老黄历'){
+                return $this->lhl($user);
+            }
 
-        if($msg['Content'] === '老黄历'){
-            return $this->lhl($user);
-        }
+            if($msg['Content'] === '账单'){
+                return $this->todayBills($user);
+            }
 
-        if($msg['Content'] === '账单'){
-            return $this->todayBills($user);
-        }
+            if($msg['Content'] === '昨日账单'){
+                return $this->yesterdayBills($user);
+            }
 
-        if($msg['Content'] === '昨日账单'){
-            return $this->yesterdayBills($user);
-        }
+            if(str_contains($msg['Content'], '发送给猪头')){
+                return $this->sendMsgToZhu($user['id'],$msg);
+            }
 
-        if(str_contains($msg['Content'], '发送给猪头')){
-            return $this->sendMsgToZhu($user['id'],$msg);
+            $Content = explode('-',$msg['Content']);
+            //记录账单
+            if(count($Content) === 4){
+                return $this->saveBills($user['id'],$Content);
+            }
+            return false;
+        }catch (\Exception $e){
+            return $e->getMessage();
         }
-
-        $Content = explode('-',$msg['Content']);
-        //记录账单
-        if(count($Content) === 4){
-            return $this->saveBills($user['id'],$Content);
-        }
-        return false;
     }
 
     public function lhl($user){

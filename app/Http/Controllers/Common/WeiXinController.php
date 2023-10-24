@@ -34,7 +34,7 @@ class WeiXinController extends BaseController
 
     public function test(){
         try {
-        $open = (new OpenApiService())->completions('php数组拆分');
+        $open = (new OpenApiService())->completions('php 数组排序并分页');
             dump($open['choices'][0]['message']['content']);
             dump($open);
             die;
@@ -66,7 +66,7 @@ class WeiXinController extends BaseController
         }
 
 
-        //Log::channel('daily')->info($msg);
+        Log::channel('daily')->info($msg);
         switch ($msg['MsgType']){
             case'event':
                 if($msg['Event'] === 'subscribe' ){
@@ -88,7 +88,7 @@ class WeiXinController extends BaseController
             case'text':
                 OpenApiPush::dispatch(['user_info' => $msg,'text' => $msg['Content']]);
                 //return $CommonService->doText($msg,'回答生成中，请稍等！');
-                /*$text = $CommonService->manage($msg,$user);
+                $text = $CommonService->manage($msg,$user);
                 if($text === false){
                     $text = '指令无效,更多功能指令请联系本人!(目前开放:老黄历, 图片, bog)';
                 }elseif($text === true){
@@ -99,7 +99,7 @@ class WeiXinController extends BaseController
                     return $CommonService->doImg($msg,$text);
                 }
 
-                return $CommonService->doText($msg,$text);*/
+                return $CommonService->doText($msg,$text);
         }
     }
 
